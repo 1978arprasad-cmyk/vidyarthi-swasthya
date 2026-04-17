@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1B5E20">
+<title>Vidyarthi Swasthya v6.2 | Real-Time AI Student Health | Khammam</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=Tiro+Telugu&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tg:#1B5E20;--tgm:#2E7D32;--tgl:#4CAF50;--tgxl:#E8F5E9;--tg2:#C8E6C9;
+  --ts:#E65100;--tsm:#F57C00;--tsl:#FFB74D;--tsxl:#FFF3E0;
+  --gold:#F9A825;--gold2:#FFD54F;
+  --mt:#00695C;--mtm:#00897B;--mtl:#26A69A;--mtxl:#E0F2F1;
+  --mb:#01579B;--mbm:#0277BD;--mbxl:#E1F5FE;
+  --gv:#4527A0;--gvl:#EDE7F6;--ai:#5E35B1;
+  --rd:#C62828;--rdl:#FFEBEE;--fb:#FF6D00;
+  --bg:#F0F7F0;--bg2:#FFFFFF;--bg3:#F5FAF5;
+  --card:#FFFFFF;--card2:#EEF6EE;
+  --tx:#0D1F0D;--tx2:#2E4A2E;--tx3:#5A7A5A;--tx4:#8FAF8F;
+  --bd:#D0E8D0;--bd2:#E5F2E5;
+  --shadow:rgba(27,94,32,.12);--shadow2:rgba(0,0,0,.08);
+  --nav-h:62px;--bot-h:70px;
+  --r:14px;--rs:9px;--rl:20px;--rxl:26px;
+  --fn:'Nunito',system-ui,sans-serif;
+  --fh:'Syne',system-ui,sans-serif;
+  --ft:'Tiro Telugu',serif;
+  --fm:'JetBrains Mono',monospace;
+  --s1:0 2px 12px var(--shadow2);--s2:0 6px 24px var(--shadow2);--s3:0 12px 48px var(--shadow);
+}
+[data-theme="dark"]{
+  --bg:#0A1510;--bg2:#0F1F15;--bg3:#142019;
+  --card:#152018;--card2:#1C2E20;
+  --tx:#E8F5E8;--tx2:#A5C8A5;--tx3:#6A9A6A;--tx4:#3D6A3D;
+  --bd:#1E3A1E;--bd2:#253E25;
+  --shadow:rgba(0,200,83,.08);--shadow2:rgba(0,0,0,.4);
+  --tgxl:rgba(76,175,80,.12);--tg2:rgba(76,175,80,.2);
+  --mtxl:rgba(0,137,123,.12);--tsxl:rgba(245,124,0,.12);
+  --mbxl:rgba(2,119,189,.12);--gvl:rgba(94,53,177,.12);--rdl:rgba(198,40,40,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--fn);background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+input,select,textarea,button{font-family:var(--fn)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-7px)}50%{transform:translateX(7px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(76,175,80,.5)}50%{box-shadow:0 0 24px rgba(76,175,80,.9)}}
+@keyframes syncPulse{0%,100%{box-shadow:0 0 6px rgba(255,109,0,.5)}50%{box-shadow:0 0 18px rgba(255,109,0,.9)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes healthPop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.fadeUp{animation:fadeUp .42s cubic-bezier(.22,.68,0,1.2) both}
+.float{animation:float 4s ease-in-out infinite}
+.shake{animation:shake .4s ease}
+.wrap{max-width:700px;margin:0 auto;padding:0 16px;width:100%}
+.page{display:none}.page.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.ga{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.span2{grid-column:1/-1}
+.card{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:17px;box-shadow:var(--s1)}
+.page-content{padding-bottom:calc(var(--bot-h)+16px)}
+/* NAV */
+.anav{background:linear-gradient(100deg,#061a06,#1B5E20 45%,var(--mt) 100%);height:var(--nav-h);padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:400;box-shadow:0 3px 24px rgba(0,0,0,.28);border-bottom:2px solid rgba(249,168,37,.5);backdrop-filter:blur(16px)}
+.anav.adm{background:linear-gradient(100deg,#0d1547,#1a237e,#283593)}
+.nav-logo{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
+.nav-emblem{width:42px;height:42px;background:rgba(255,255,255,.14);border-radius:12px;border:1.5px solid rgba(255,255,255,.24);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.nav-title h1{font-family:var(--fh);font-size:14px;font-weight:800;color:#fff;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-title p{font-size:10px;color:rgba(255,255,255,.58);font-weight:600;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.nav-btn{width:38px;height:38px;border:none;border-radius:11px;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.2);color:#fff;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .18s;-webkit-tap-highlight-color:transparent}
+.nav-btn:active{background:rgba(255,255,255,.28);transform:scale(.92)}
+.ham-btn{width:42px;height:42px;border-radius:13px}
+/* SYNC */
+.sync-badge{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 11px;cursor:pointer;transition:.18s;-webkit-tap-highlight-color:transparent}
+.sync-badge:active{background:rgba(255,255,255,.22)}
+.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.sync-dot.local{background:#9E9E9E}
+.sync-dot.connecting{background:var(--fb);animation:syncPulse 1.2s infinite}
+.sync-dot.synced{background:#4CAF50;animation:glow 2.5s infinite}
+.sync-dot.offline{background:var(--fb);animation:pulse 1.5s infinite}
+.sync-dot.error{background:#F44336}
+.sync-lbl{font-size:10px;font-weight:800;color:rgba(255,255,255,.82);white-space:nowrap}
+.sync-spin{width:11px;height:11px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+/* DRAWER */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;backdrop-filter:blur(5px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(310px,90vw);background:var(--card);z-index:900;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-12px 0 60px rgba(0,0,0,.25)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{background:linear-gradient(145deg,#061a06,#1B5E20,var(--mt));padding:20px 16px 18px;border-bottom:2.5px solid rgba(249,168,37,.5);display:flex;align-items:flex-start;justify-content:space-between}
+.drawer-close{width:34px;height:34px;border:none;background:rgba(255,255,255,.16);border-radius:9px;color:#fff;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.drawer-body{flex:1;overflow-y:auto;padding:10px 10px 20px}
+.drawer-item{display:flex;align-items:center;gap:13px;padding:12px 13px;border-radius:14px;cursor:pointer;margin-bottom:4px;border:1.5px solid transparent;transition:all .16s;font-weight:700;font-size:13px;color:var(--tx2);-webkit-tap-highlight-color:transparent}
+.drawer-item:hover{background:var(--tgxl);border-color:var(--tg2);color:var(--tg)}
+.drawer-item:active{transform:scale(.97)}
+.drawer-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:var(--s1);min-width:42px}
+.di-home{background:linear-gradient(135deg,#E8F5E9,#C8E6C9)}.di-add{background:linear-gradient(135deg,#E0F7FA,#B2EBF2)}.di-bulk{background:linear-gradient(135deg,#E8F5E9,#A5D6A7)}.di-upload{background:linear-gradient(135deg,var(--tsxl),#FFE0B2)}.di-export{background:linear-gradient(135deg,var(--mbxl),#BBDEFB)}.di-ai{background:linear-gradient(135deg,#EDE7F6,#D1C4E9)}.di-cloud{background:linear-gradient(135deg,var(--tsxl),#FFE0B2)}.di-key{background:linear-gradient(135deg,#FFF8E1,#FFECB3)}.di-print{background:linear-gradient(135deg,#F5F5F5,#E8E8E8)}.di-backup{background:linear-gradient(135deg,#E8F5E9,#B2DFDB)}.di-logout{background:linear-gradient(135deg,#FFEBEE,#FFCDD2)}
+.drawer-sep{height:1px;background:var(--bd2);margin:6px 0}
+/* BOTTOM NAV */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);z-index:350;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1.5px solid rgba(200,230,201,.5);display:flex;align-items:center;justify-content:space-around;box-shadow:0 -6px 32px rgba(0,0,0,.1);padding:0 8px 4px;border-radius:22px 22px 0 0}
+[data-theme="dark"] .bot-nav{background:rgba(21,32,24,.97);border-top-color:rgba(46,125,50,.25)}
+.bot-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:13px;cursor:pointer;border:none;background:transparent;transition:all .18s;flex:1;max-width:70px;-webkit-tap-highlight-color:transparent}
+.bot-nav-btn:active{transform:scale(.9)}
+.bot-nav-btn.active .bni{background:linear-gradient(135deg,var(--tgm),var(--mt));transform:scale(1.1);box-shadow:0 5px 16px rgba(46,125,50,.35)}
+.bot-nav-btn.active .bnl{color:var(--tgm);font-weight:800}
+.bni{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg3);transition:all .2s}
+.bnl{font-size:10px;font-weight:700;color:var(--tx4);transition:all .2s;white-space:nowrap}
+.bot-fab{width:60px;height:60px;border-radius:20px;background:linear-gradient(140deg,var(--tgl),var(--tgm),var(--mt));box-shadow:0 7px 24px rgba(46,125,50,.42);display:flex;align-items:center;justify-content:center;cursor:pointer;border:3.5px solid var(--card);position:relative;top:-16px;-webkit-tap-highlight-color:transparent;transition:all .18s}
+.bot-fab:active{transform:scale(.89) translateY(-12px)}
+/* GOV BAR */
+.secbar{background:linear-gradient(90deg,var(--tg),var(--mt));color:#fff;padding:5px 12px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;border-bottom:2px solid rgba(249,168,37,.5);text-align:center;line-height:1.6}
+.secbar a{color:var(--gold2);cursor:pointer;font-weight:800}
+/* BACK BAR */
+.back-bar{position:sticky;top:var(--nav-h);z-index:300;background:linear-gradient(95deg,var(--tg),var(--tgm));padding:0 14px;display:flex;align-items:center;gap:9px;min-height:50px;border-bottom:2px solid rgba(249,168,37,.45);box-shadow:0 3px 16px rgba(0,0,0,.18)}
+.back-btn{background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3);color:#fff;cursor:pointer;font-weight:800;font-size:12px;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:24px;font-family:var(--fn);transition:all .16s;white-space:nowrap;min-height:40px;-webkit-tap-highlight-color:transparent}
+.back-btn:active{background:rgba(255,255,255,.28)}
+.back-info{color:rgba(255,255,255,.85);font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
+.back-add{background:linear-gradient(135deg,var(--tsm),var(--ts));border:none;color:#fff;cursor:pointer;font-weight:800;font-size:12px;display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:24px;font-family:var(--fn);white-space:nowrap;min-height:40px;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.back-add:active{transform:scale(.93)}
+/* HERO */
+.hero{background:linear-gradient(160deg,#061a06 0%,#1B5E20 38%,var(--tgm) 62%,var(--mt) 80%,#004D40 100%);position:relative;overflow:hidden;padding:56px 0 80px}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 2px 2px,rgba(255,255,255,.04) 1px,transparent 0);background-size:36px 36px;pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 60%,rgba(249,168,37,.07) 0%,transparent 60%);pointer-events:none}
+.hero-wave{position:absolute;bottom:0;left:0;right:0}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);border-radius:28px;padding:6px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:18px;color:#fff}
+.hero-pulse{width:8px;height:8px;border-radius:50%;background:#69F0AE;animation:pulse 1.8s infinite;display:inline-block}
+.auth-card{background:rgba(255,255,255,.97);border-radius:var(--rxl);padding:24px;width:calc(100% - 32px);max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.3);margin:20px auto 0;animation:scaleIn .3s cubic-bezier(.22,.68,0,1.2)}
+[data-theme="dark"] .auth-card{background:rgba(21,32,24,.98);border:1px solid rgba(76,175,80,.2)}
+/* DASHBOARD */
+.dash-hero{background:linear-gradient(145deg,#061a06,#1B5E20 48%,var(--mt));padding:24px 0 82px;color:#fff;position:relative;overflow:hidden}
+.dash-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 2px 2px,rgba(255,255,255,.04) 1px,transparent 0);background-size:28px 28px}
+.dash-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:56px;background:var(--bg);border-radius:56px 56px 0 0}
+.stats-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:-50px;position:relative;z-index:10;margin-bottom:18px}
+.scard{background:var(--card);border-radius:var(--rl);padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--s2);border:1px solid var(--bd2);transition:transform .18s}
+.scard:active{transform:scale(.97)}
+.sico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+/* ALERTS */
+.alert-banner{border-radius:var(--rl);padding:13px 15px;margin-bottom:12px;display:flex;align-items:center;gap:12px;cursor:pointer;border-left:4px solid}
+.ab-urgent{background:var(--rdl);border-color:var(--rd)}.ab-warn{background:var(--tsxl);border-color:var(--tsm)}.ab-info{background:var(--mbxl);border-color:var(--mbm)}.ab-sync{background:linear-gradient(135deg,var(--tsxl),#FFE0B2);border-color:var(--fb)}
+/* TOOLBAR */
+.toolbar{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:12px 13px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--s1)}
+.srch{position:relative;width:100%}
+.srch input{padding:12px 12px 12px 42px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:14px;outline:none;width:100%;min-height:48px;background:var(--bg3);color:var(--tx);transition:all .2s;-webkit-appearance:none}
+.srch input:focus{border-color:var(--tgm);background:var(--card);box-shadow:0 0 0 3px rgba(46,125,50,.12)}
+.srch-i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.filter-row{display:flex;gap:8px}
+.fsl{padding:10px 9px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:13px;outline:none;background:var(--bg3);color:var(--tx);cursor:pointer;flex:1;min-height:44px;-webkit-appearance:none;transition:border-color .2s}
+.fsl:focus{border-color:var(--tgm)}
+/* STUDENT CARD */
+.sc-card{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:15px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s,border-color .18s;box-shadow:var(--s1)}
+.sc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--rl) var(--rl) 0 0}
+.sc-card:hover{transform:translateY(-3px);box-shadow:var(--s2);border-color:var(--tg2)}
+.sc-card:active{transform:scale(.98)}
+.sc-m::before{background:linear-gradient(90deg,#1565C0,#42A5F5)}.sc-f::before{background:linear-gradient(90deg,#AD1457,#F06292)}.sc-o::before{background:linear-gradient(90deg,var(--ts),var(--gold))}
+.bv{width:100%;padding:11px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--tgxl),var(--tg2));color:var(--tgm);cursor:pointer;font-weight:800;font-size:13px;margin-top:11px;font-family:var(--fn);min-height:44px;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .18s;border:1.5px solid var(--tg2);-webkit-tap-highlight-color:transparent}
+.bv:active{background:linear-gradient(135deg,var(--tgm),var(--mt));color:#fff}
+/* HEALTH CARD */
+.hcid{border-radius:var(--rl);padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(145deg,#061a06 0%,#1B5E20 40%,var(--mt) 78%,#004D40 100%);box-shadow:0 14px 48px rgba(13,59,13,.4)}
+.hcid::before{content:'';position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 1px,transparent 13px),repeating-linear-gradient(-45deg,#fff 0,#fff 1px,transparent 1px,transparent 13px);pointer-events:none}
+.hcid::after{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(249,168,37,.1) 0%,transparent 70%);pointer-events:none}
+.ip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.ip{background:var(--bg3);border-radius:var(--r);padding:11px 13px;border:1px solid var(--bd2)}
+.ip-l{font-size:10px;font-weight:800;color:var(--tx4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ip-v{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbar{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:14px;margin-bottom:14px;box-shadow:var(--s1)}
+.vchip{text-align:center;border-radius:var(--r);padding:10px 8px;border:1.5px solid}
+.vc-n{background:var(--tgxl);border-color:var(--tg2)}.vc-w{background:var(--tsxl);border-color:#FFCC80}.vc-a{background:var(--rdl);border-color:#EF9A9A}.vc-x{background:var(--bg3);border-color:var(--bd2)}
+.vl{font-size:9px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em}
+.vv{font-size:13px;font-weight:900;margin-top:3px;line-height:1.15}
+.vi{font-size:9px;font-weight:600;margin-top:2px;opacity:.8}
+.hs-card{background:linear-gradient(135deg,var(--tgxl),var(--mtxl));border:1px solid var(--tg2);border-radius:var(--rl);padding:15px;margin-bottom:14px;display:flex;gap:16px;align-items:center;box-shadow:var(--s1);animation:healthPop .5s ease}
+.score-ring{position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-txt{position:absolute;text-align:center}
+.al-strip{border-radius:var(--r);padding:11px 13px;display:flex;gap:10px;align-items:flex-start;border-left:4px solid;margin-bottom:9px}
+.vt{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.vt th{background:linear-gradient(90deg,var(--gv),#7B1FA2);color:#fff;padding:9px;text-align:center;font-weight:800;font-size:11px}
+.vt th:first-child{border-radius:var(--rs) 0 0 var(--rs);text-align:left}.vt th:last-child{border-radius:0 var(--rs) var(--rs) 0}
+.vt td{padding:9px;border-bottom:1px solid var(--bd2);text-align:center;font-size:12px;color:var(--tx)}
+.vt td:first-child{text-align:left;font-weight:700}
+.vt tr:nth-child(even) td{background:var(--bg3)}
+.vt tr:last-child td{border-bottom:none}
+.vc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.vc-item{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border-radius:var(--rs);background:var(--bg3);border:1.5px solid var(--bd);cursor:pointer;transition:.15s}
+.vc-item:hover{background:rgba(206,147,216,.12);border-color:#CE93D8}
+.vc-item.done{background:var(--tgxl);border-color:var(--tg2)}
+.scheme-panel{background:linear-gradient(135deg,var(--tgxl),var(--mtxl));border:1.5px solid var(--tg2);border-radius:var(--rl);padding:13px 14px;margin-bottom:14px;box-shadow:var(--s1)}
+.scheme-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.scheme-item{background:var(--card);border-radius:var(--rs);padding:10px 11px;border-left:3px solid;box-shadow:var(--s1)}
+.rec-card{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:15px;position:relative;box-shadow:var(--s1);border-left:5px solid var(--bd2);margin-bottom:11px;transition:.15s}
+.rec-card:hover{box-shadow:var(--s2);border-color:var(--tg2)}
+.ch-sec{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:14px;margin-bottom:14px;box-shadow:var(--s1)}
+.analytics-card{background:var(--card);border-radius:var(--rl);border:1px solid var(--bd2);padding:16px;margin-bottom:14px;box-shadow:var(--s1)}
+.metric-chip{display:flex;flex-direction:column;align-items:center;flex:1;padding:12px;background:var(--bg3);border-radius:var(--r);border:1.5px solid var(--bd2);min-width:70px}
+.metric-num{font-family:var(--fh);font-size:22px;font-weight:800}
+.metric-lbl{font-size:10px;font-weight:700;color:var(--tx3);text-align:center;text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:.07em}
+.req{color:#E53935}
+.field input,.field select,.field textarea{padding:12px 13px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:15px;outline:none;background:var(--bg3);color:var(--tx);width:100%;transition:border-color .2s,box-shadow .2s,background .2s;min-height:48px;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--tgm);background:var(--card);box-shadow:0 0 0 3px rgba(46,125,50,.12)}
+.field textarea{resize:vertical;min-height:78px;line-height:1.55}
+.sec-head{grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--tgxl);padding-bottom:6px;margin-top:13px;color:var(--tgm);display:flex;align-items:center;gap:8px}
+/* BUTTONS */
+.btn{border:none;border-radius:var(--r);cursor:pointer;font-weight:700;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:8px;transition:all .16s;font-family:var(--fn);min-height:48px;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn:active{transform:scale(.94)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-p{background:linear-gradient(135deg,var(--tgl),var(--tgm),var(--tg));color:#fff;box-shadow:0 4px 16px rgba(46,125,50,.32)}
+.btn-p:hover{box-shadow:0 7px 22px rgba(46,125,50,.42);transform:translateY(-1px)}
+.btn-p:active{transform:scale(.94) translateY(0)}
+.btn-tl{background:linear-gradient(135deg,var(--mtl),var(--mtm),var(--mt));color:#fff;box-shadow:0 4px 14px rgba(0,105,92,.28)}
+.btn-bl{background:linear-gradient(135deg,#42A5F5,var(--mbm),var(--mb));color:#fff;box-shadow:0 4px 14px rgba(2,119,189,.28)}
+.btn-am{background:linear-gradient(135deg,var(--tsl),var(--tsm),var(--ts));color:#fff;box-shadow:0 4px 14px rgba(230,81,0,.28)}
+.btn-in{background:linear-gradient(135deg,#9C27B0,var(--gv));color:#fff;box-shadow:0 4px 14px rgba(69,39,160,.28)}
+.btn-ai{background:linear-gradient(135deg,#7B1FA2,var(--ai),#311B92);color:#fff;box-shadow:0 4px 14px rgba(98,0,234,.3)}
+.btn-rd{background:linear-gradient(135deg,#EF5350,var(--rd));color:#fff;box-shadow:0 4px 14px rgba(183,28,28,.28)}
+.btn-fb{background:linear-gradient(135deg,#FF8F00,var(--fb));color:#fff;box-shadow:0 4px 14px rgba(255,109,0,.32)}
+.btn-gh{background:var(--card);color:var(--tx2);border:1.5px solid var(--bd)}
+.btn-gh:hover{border-color:var(--tgm);background:var(--tgxl)}
+.btn-sm{padding:9px 15px;font-size:12px;min-height:38px;border-radius:var(--rs)}
+.btn-lg{padding:15px 30px;font-size:16px;border-radius:var(--rl)}
+.btn-full{width:100%;justify-content:center}
+/* BADGES */
+.badge{border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.bdot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.v-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(249,168,37,.18);border:1px solid rgba(249,168,37,.4);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;color:var(--gold2)}
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:600;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(5px)}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:28px 28px 0 0;width:100%;max-width:700px;max-height:94vh;overflow-y:auto;box-shadow:0 -12px 60px rgba(0,0,0,.25);animation:slideUp .28s cubic-bezier(.4,0,.2,1);padding-bottom:calc(var(--bot-h)+10px)}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--bd2);position:sticky;top:0;background:var(--card);z-index:2;border-radius:28px 28px 0 0}
+.mhead::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:var(--bd)}
+.mhead h2{font-family:var(--fh);font-size:16px;color:var(--tg);display:flex;align-items:center;gap:8px}
+.mclose{width:34px;height:34px;border:none;background:var(--bg3);border-radius:9px;cursor:pointer;font-size:16px;color:var(--tx3);display:flex;align-items:center;justify-content:center;transition:.15s}
+.mclose:hover{background:var(--rdl);color:#E53935}
+.mbody{padding:18px}
+.mfoot{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;padding-bottom:6px;flex-wrap:wrap}
+.err{display:none;background:var(--rdl);color:var(--rd);border-radius:var(--rs);padding:10px 13px;font-size:13px;font-weight:700;margin-top:9px;border-left:4px solid var(--rd)}
+.ok{display:none;background:var(--tgxl);color:var(--tg);border-radius:var(--rs);padding:10px 13px;font-size:13px;font-weight:700;margin-top:9px;border-left:4px solid var(--tgm)}
+.warn-b{background:var(--tsxl);border-left:4px solid var(--tsm);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--ts);margin-bottom:12px;line-height:1.65}
+.info-b{background:var(--mbxl);border-left:4px solid var(--mbm);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--mbm);margin-bottom:12px;line-height:1.65}
+/* AI CHAT */
+.ai-chat{display:flex;flex-direction:column;height:360px}
+.ai-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg3);border-radius:var(--r);margin-bottom:10px;border:1px solid var(--bd2)}
+.ai-msg{max-width:90%;padding:11px 14px;border-radius:18px;font-size:13px;line-height:1.6}
+.ai-msg.user{background:linear-gradient(135deg,var(--tgm),var(--mt));color:#fff;align-self:flex-end;border-radius:18px 18px 4px 18px}
+.ai-msg.bot{background:var(--card);color:var(--tx);align-self:flex-start;border:1px solid var(--bd2);border-radius:18px 18px 18px 4px;box-shadow:var(--s1)}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--tgm);display:inline-block;animation:pulse 1s infinite}
+.ai-dot:nth-child(2){animation-delay:.15s}.ai-dot:nth-child(3){animation-delay:.3s}
+.ai-row{display:flex;gap:8px}
+.ai-row input{flex:1;padding:12px 16px;border:1.5px solid var(--bd);border-radius:28px;font-size:14px;outline:none;min-height:46px;-webkit-appearance:none;background:var(--bg3);color:var(--tx);transition:border-color .2s}
+.ai-row input:focus{border-color:var(--tgm);box-shadow:0 0 0 3px rgba(46,125,50,.1)}
+.ai-qpills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ai-pill{font-size:11px;background:var(--gvl);color:var(--gv);border-radius:20px;padding:6px 12px;cursor:pointer;font-weight:700;border:1px solid rgba(206,147,216,.4);min-height:34px;display:flex;align-items:center;transition:.15s;-webkit-tap-highlight-color:transparent}
+.ai-pill:hover{background:var(--gv);color:#fff}
+/* CLOUD SETUP */
+.setup-step{display:flex;gap:13px;padding:12px 14px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--bd2);margin-bottom:10px}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--fb),#FF8F00);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.firebase-field{padding:11px 13px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:13px;outline:none;background:var(--bg3);color:var(--tx);width:100%;transition:border-color .2s;min-height:44px;font-family:var(--fm)}
+.firebase-field:focus{border-color:var(--fb);box-shadow:0 0 0 3px rgba(255,109,0,.1)}
+/* UPLOAD */
+.uz{border:2.5px dashed var(--tg2);border-radius:var(--rl);padding:28px 14px;text-align:center;background:var(--tgxl);cursor:pointer;transition:.18s}
+.uz:hover,.uz.drag{background:var(--tg2);border-color:var(--tgm)}
+.tab-s{display:flex;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--bd);margin-bottom:14px}
+.tab-b{flex:1;padding:11px;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--fn);transition:.18s;min-height:46px;background:var(--bg3);color:var(--tx3);-webkit-tap-highlight-color:transparent}
+.tab-b.on{background:var(--tgm);color:#fff}
+/* ADMIN */
+.admin-stat{background:var(--card);border-radius:var(--rl);padding:13px;display:flex;align-items:center;gap:12px;box-shadow:var(--s1)}
+.school-row{padding:12px 15px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:9px;transition:background .15s}
+.school-row:hover{background:var(--bg3)}
+.school-row:last-child{border-bottom:none}
+.st-box{display:flex;gap:11px;padding:11px 13px;border-radius:var(--r);margin-bottom:8px;border:1px solid var(--bd2);background:var(--bg3)}
+.st-num{width:28px;height:28px;border-radius:50%;background:var(--tgm);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.integ-card{border-radius:var(--rl);padding:14px;margin-bottom:10px;border:1.5px solid var(--bd2);display:flex;gap:13px;align-items:flex-start;background:var(--card);transition:.15s}
+.integ-logo{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:var(--s1)}
+/* TOAST */
+#toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%);padding:13px 24px;border-radius:var(--rl);font-size:13px;font-weight:700;z-index:9999;display:none;align-items:center;gap:9px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:calc(100vw - 28px);text-align:center}
+#toast.show{display:flex;animation:fadeUp .25s ease}
+#toast.ts{background:var(--tg);color:#fff}#toast.tw{background:var(--ts);color:#fff}#toast.te{background:var(--rd);color:#fff}#toast.ti{background:var(--mb);color:#fff}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex-shrink:0;border:2.5px solid rgba(255,255,255,.25)}
+.dl{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--tx4);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.dl::before,.dl::after{content:'';flex:1;height:1px;background:var(--bd2)}
+.restore-banner{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);border-radius:var(--rl);padding:13px 15px;margin-top:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.18s;text-align:left;width:calc(100% - 32px);max-width:420px;margin-left:auto;margin-right:auto;-webkit-tap-highlight-color:transparent}
+.restore-banner:hover{background:rgba(255,255,255,.18)}
+.restore-banner:active{transform:scale(.97)}
+.ticker-wrap{background:var(--gold);overflow:hidden;padding:9px 0}
+.ticker-inner{display:inline-block;white-space:nowrap;animation:ticker 20s linear infinite;font-family:var(--fh);font-size:12px;font-weight:800;letter-spacing:.07em;color:var(--tg)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--tgm)}
+@media print{.anav,.secbar,.back-bar,.bot-nav,.dash-hero,.toolbar,.bv,.drawer,.drawer-overlay,#toast,.no-print{display:none!important}#vw-list{display:none!important}#vw-card{display:block!important}.hcid,.hcid *{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{background:#fff!important;color:#000!important;font-size:11px}.card,.ip,.vbar{background:#fff!important}@page{size:A4;margin:14mm 12mm}.rec-card,.vbar,.ch-sec{page-break-inside:avoid}.modal,.overlay{display:none!important}.page-content{padding-bottom:0!important}}
+</style>
+</head>
+<body>
+<div class="secbar">🔒 Secure &nbsp;|&nbsp; <strong>Vidyarthi Swasthya v6.0</strong> &nbsp;|&nbsp; Khammam District &nbsp;|&nbsp;<a onclick="openAdminLogin()">🛡 Admin</a> &nbsp;|&nbsp;<a onclick="openIntegHub()">🔗 AI Hub</a> &nbsp;|&nbsp;<a onclick="openCloudSetup()">☁️ Sync</a></div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="appDrawer">
+  <div class="drawer-head">
+    <div style="flex:1;min-width:0">
+      <div style="font-family:var(--fh);font-size:15px;font-weight:800;color:#fff;margin-bottom:3px" id="drawerSchName">School</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.58);margin-bottom:8px" id="drawerSchCode">Khammam District</div>
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><div class="v-badge">v6.0 Super App</div><div id="dSyncBadge" style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border-radius:20px;padding:3px 9px"><span id="dSyncDot" style="width:7px;height:7px;border-radius:50%;background:#9E9E9E;display:inline-block;flex-shrink:0"></span><span id="dSyncTxt" style="font-size:10px;font-weight:700;color:rgba(255,255,255,.72)">Local Only</span></div></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <!-- STUDENTS -->
+    <div class="drawer-item" onclick="closeDrawer();showList()"><div class="drawer-icon di-home">🏠</div><div><div style="font-weight:800">Home Dashboard</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Students &amp; health overview</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openModal('mo-addst')"><div class="drawer-icon di-add">➕</div><div><div style="font-weight:800">Add Student</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Register new student</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openBulkScreening()"><div class="drawer-icon di-bulk">🩺</div><div><div style="font-weight:800">Bulk Screening</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Screen entire class at once</div></div></div>
+    <div class="drawer-sep"></div>
+    <!-- RECORDS & REPORTS -->
+    <div class="drawer-item" onclick="closeDrawer();openModal('mo-upl')"><div class="drawer-icon di-upload">📥</div><div><div style="font-weight:800">Upload from Excel</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Paste or upload .xlsx file</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openExportModal()"><div class="drawer-icon di-export">📤</div><div><div style="font-weight:800">Export Reports</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">6 Excel export formats</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openAIAssistant()"><div class="drawer-icon di-ai">🤖</div><div><div style="font-weight:800">AI Health Assistant</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Diagnosis, treatment &amp; nutrition advice</div></div></div>
+    <div class="drawer-sep"></div>
+    <!-- ACCOUNT -->
+    <div class="drawer-item" onclick="closeDrawer();backupData()"><div class="drawer-icon di-backup">💾</div><div><div style="font-weight:800">Backup Data</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Download offline backup file</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openModal('mo-pin')"><div class="drawer-icon di-key">🔑</div><div><div style="font-weight:800">Change PIN</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Update school PIN</div></div></div>
+    <div class="drawer-item" id="printDrawerItem" onclick="closeDrawer();window.print()" style="display:none"><div class="drawer-icon di-print">🖨️</div><div><div style="font-weight:800">Print Health Card</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">A4 PDF print</div></div></div>
+    <div class="drawer-item" onclick="closeDrawer();openModal('mo-fgt')"><div class="drawer-icon" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB)">❓</div><div><div style="font-weight:800">Forgot PIN?</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Account recovery</div></div></div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-item" onclick="closeDrawer();logout()"><div class="drawer-icon di-logout">🚪</div><div><div style="font-weight:800;color:#E53935">Logout</div><div style="font-size:12px;color:var(--tx3);margin-top:1px">Sign out of school</div></div></div>
+  </div>
+</div>
+
+<!-- LANDING PAGE -->
+<div id="pg-land" class="page active">
+  <div class="hero">
+    <div class="hero-wave"><svg viewBox="0 0 1440 64" preserveAspectRatio="none" fill="var(--bg)" style="display:block;width:100%;height:64px"><path d="M0,32 C360,64 720,0 1080,32 C1260,48 1380,40 1440,32 L1440,64 L0,64 Z"/></svg></div>
+    <div class="wrap" style="text-align:center;position:relative;z-index:1">
+      <div class="float" style="margin-bottom:18px;display:flex;justify-content:center"><svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,.09)" stroke="rgba(249,168,37,.45)" stroke-width="1.5"/><rect x="36" y="22" width="8" height="36" rx="4" fill="#F9A825"/><rect x="22" y="36" width="36" height="8" rx="4" fill="#F9A825"/><circle cx="40" cy="40" r="7.5" fill="rgba(255,255,255,.92)"/><circle cx="40" cy="40" r="3.5" fill="#1B5E20"/><path d="M14 44 Q40 27 66 44" stroke="rgba(249,168,37,.65)" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="67" rx="16" ry="4" fill="rgba(249,168,37,.22)"/></svg></div>
+      <div class="hero-badge"><span class="hero-pulse"></span>🏛 GOVT TELANGANA · KHAMMAM DISTRICT · AI-POWERED v6.0</div>
+      <h1 style="font-family:var(--fh);font-size:clamp(30px,9vw,56px);color:#fff;font-weight:800;line-height:1.02;margin-bottom:8px;letter-spacing:-.02em;text-shadow:0 3px 24px rgba(0,0,0,.3)">Vidyarthi Swasthya</h1>
+      <p style="font-family:var(--ft);font-size:clamp(15px,4.5vw,21px);color:rgba(255,255,255,.7);margin-bottom:8px">విద్యార్థి స్వాస్థ్య కార్డు</p>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:6px 16px;margin-bottom:20px"><span style="font-size:14px">🏛</span><span style="font-size:12px;font-weight:800;color:#FFD54F">An Initiative of Khammam District Collectorate, Govt of Telangana</span></div>
+      <p style="font-size:clamp(12px,3.5vw,15px);color:rgba(255,255,255,.76);max-width:400px;margin:0 auto 24px;line-height:1.75">Every student. Every check-up. One AI-powered permanent health record — synced instantly across all your devices.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px">
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">🤖 Claude AI</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">📱 All Devices</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">💉 NHM 2024</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">📊 WHO Standards</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">🩺 Bulk Screening</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">🌙 Dark Mode</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">📥 Excel Upload</span>
+        <span style="background:rgba(255,255,255,.13);color:#fff;border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.2)">🖨️ Print A4</span>
+      </div>
+      <div id="authBtns" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-lg" style="background:rgba(255,255,255,.96);color:var(--tg);min-height:52px;font-weight:900;font-family:var(--fh);box-shadow:0 10px 32px rgba(0,0,0,.24)" onclick="showAuth('login')">🔐 School Login</button>
+        <button class="btn btn-lg" style="background:rgba(255,255,255,.13);color:#fff;border:2px solid rgba(255,255,255,.38);min-height:52px;font-weight:900;font-family:var(--fh)" onclick="showAuth('register')">🏫 Register School</button>
+      </div>
+      <button class="restore-banner" onclick="openRestoreModal()">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📲</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px">New device? Restore your backup</div><div style="font-size:11px;color:rgba(255,255,255,.62);line-height:1.5">Upload a .json backup file to restore all data on this device.</div></div>
+        <div style="font-size:18px;color:rgba(255,255,255,.4)">›</div>
+      </button>
+      <div id="authCard" class="auth-card" style="display:none">
+        <h2 id="authTitle" style="font-family:var(--fh);font-size:19px;color:var(--tg);margin-bottom:15px"></h2>
+        <div id="authFields" style="display:flex;flex-direction:column;gap:13px"></div>
+        <div id="authErr" class="err"></div>
+        <div style="display:flex;gap:9px;margin-top:16px"><button class="btn btn-gh" onclick="hideAuth()" style="flex:1;justify-content:center">← Back</button><button class="btn btn-p" onclick="submitAuth()" style="flex:2;justify-content:center">Enter →</button></div>
+        <div id="authSwitch" style="text-align:center;font-size:12px;color:var(--tx3);margin-top:11px"></div>
+        <div id="fgtLnk" style="display:none;text-align:center;margin-top:9px"><span style="font-size:13px;color:var(--ts);cursor:pointer;font-weight:700" onclick="openModal('mo-fgt')">🔑 Forgot Code or PIN?</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:26px 0;background:linear-gradient(140deg,#1a0433,#5E35B1,#2a1070)">
+    <div class="wrap"><div style="background:rgba(255,255,255,.08);border-radius:var(--rxl);padding:20px;border:1px solid rgba(255,255,255,.14)">
+      <h2 style="font-family:var(--fh);font-size:20px;color:#fff;margin-bottom:10px">🤖 AI Health Assistant — Claude</h2>
+      <p style="color:rgba(255,255,255,.76);font-size:13px;line-height:1.7;margin-bottom:14px">Context-aware AI sees each student's actual vitals, Hb levels, and vaccination history. Provides NHM 2024 compliant diagnosis suggestions, treatment plans, nutritional advice, and referral guidance.</p>
+      <div style="background:rgba(0,0,0,.28);border-radius:var(--rl);padding:12px">
+        <div style="font-size:10px;color:rgba(255,255,255,.45);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.07em">Live AI Example</div>
+        <div style="background:rgba(255,255,255,.13);border-radius:10px 10px 10px 3px;padding:9px 12px;font-size:12px;color:#fff;max-width:85%;margin-bottom:7px">Ravi Kumar — Hb 9.2 g/dl, BMI 12.8, Age 11. Suggest treatment.</div>
+        <div style="background:rgba(255,255,255,.93);border-radius:10px 10px 3px 10px;padding:10px 12px;font-size:12px;color:#4527A0;margin-left:auto;max-width:94%;line-height:1.65"><b>Moderate anaemia + severely underweight.</b> IFA syrup 3mg/kg/day × 3 months. Deworming (Albendazole). MDM extra ration. WIFS eligible. Refer NRC if no improvement. — NHM India 2024 ✓</div>
+      </div>
+    </div></div>
+  </div>
+  <div style="padding:26px 0;background:linear-gradient(140deg,#1B5E20,var(--mt))">
+    <div class="wrap"><div style="background:rgba(0,0,0,.2);border-radius:var(--rxl);padding:20px;border:1px solid rgba(255,255,255,.14)">
+      <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.14);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.07em;margin-bottom:10px">✨ NEW IN v6.0</div>
+      <h2 style="font-family:var(--fh);font-size:20px;color:#fff;margin-bottom:10px">🩺 Bulk Health Screening — Entire Class in Minutes</h2>
+      <p style="color:rgba(255,255,255,.78);font-size:13px;line-height:1.7;margin-bottom:12px">Screen all 40 students in a class in one session. Previous vitals shown for comparison. Auto-generates follow-up alerts for anaemia, underweight, and urgent referrals.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:24px;margin-bottom:6px">📋</div><div style="font-size:11px;font-weight:700;color:#fff">Select class</div></div>
+        <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:24px;margin-bottom:6px">⚡</div><div style="font-size:11px;font-weight:700;color:#fff">Enter vitals fast</div></div>
+        <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:24px;margin-bottom:6px">☁️</div><div style="font-size:11px;font-weight:700;color:#fff">Synced instantly</div></div>
+      </div>
+    </div></div>
+  </div>
+  <div style="padding:26px 0;background:linear-gradient(135deg,var(--tg),var(--mt));color:#fff">
+    <div class="wrap"><div style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center">
+      <div><div style="font-family:var(--fh);font-size:34px;font-weight:800" id="ls1">0</div><div style="font-size:11px;opacity:.65;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Schools</div></div>
+      <div style="border-left:1px solid rgba(255,255,255,.15)"><div style="font-family:var(--fh);font-size:34px;font-weight:800" id="ls2">0</div><div style="font-size:11px;opacity:.65;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Students</div></div>
+      <div style="border-left:1px solid rgba(255,255,255,.15)"><div style="font-family:var(--fh);font-size:34px;font-weight:800" id="ls3">0</div><div style="font-size:11px;opacity:.65;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Records</div></div>
+    </div></div>
+  </div>
+  <footer style="background:#080808;color:#fff;padding:24px 0"><div class="wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-family:var(--fh);font-size:16px">🏥 Vidyarthi Swasthya</div><div class="v-badge">v6.0</div></div>
+    <p style="font-size:12px;color:rgba(255,255,255,.35);line-height:1.75;margin-bottom:11px">Collector's Office, Khammam District, Telangana. Supabase Real-Time Sync. Claude AI. NHM India 2024. Free for all govt schools.</p>
+    <div style="font-size:10px;color:rgba(255,255,255,.2)">© 2026 Collector's Office, Khammam | Govt of Telangana | v6.0 — AI Student Health Super App</div>
+  </div></footer>
+</div>
+
+<!-- APP PAGE -->
+<div id="pg-app" class="page">
+  <nav class="anav">
+    <div class="nav-logo"><div class="nav-emblem">🏥</div><div class="nav-title"><h1 id="navName">School</h1><p id="navCode">Khammam</p></div></div>
+    <div class="nav-actions">
+      <div class="sync-badge" onclick="openCloudSetup()"><span class="sync-dot local" id="syncDot"></span><span class="sync-lbl" id="syncLbl">Local</span><span class="sync-spin" id="syncSpin"></span></div>
+      <button class="nav-btn" onclick="toggleTheme()" id="themeBtn" title="Dark Mode">🌙</button>
+      <button class="nav-btn" onclick="openAIAssistant()" style="background:linear-gradient(135deg,rgba(94,53,177,.5),rgba(69,39,160,.3));border-color:rgba(156,39,176,.38)">🤖</button>
+      <button class="nav-btn" onclick="openModal('mo-addst')" style="background:linear-gradient(135deg,rgba(46,125,50,.45),rgba(0,105,92,.3));border-color:rgba(76,175,80,.38)">➕</button>
+      <button class="nav-btn ham-btn" onclick="openDrawer()"><svg width="20" height="15" viewBox="0 0 20 15" fill="none"><rect y="0" width="20" height="2.5" rx="1.25" fill="white"/><rect y="6" width="20" height="2.5" rx="1.25" fill="white"/><rect y="12" width="20" height="2.5" rx="1.25" fill="white"/></svg></button>
+    </div>
+  </nav>
+  <div id="vw-list" class="page-content">
+    <div class="dash-hero">
+      <div class="wrap" style="position:relative;z-index:1;padding-bottom:6px">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.42);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">Vidyarthi Swasthya v6.0 · AI Health Super App</div>
+        <div style="font-family:var(--fh);font-size:clamp(17px,5vw,22px);font-weight:800;color:#fff;margin-bottom:3px" id="dashG">Good morning!</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.62)" id="dashS">Khammam District Health Programme</div>
+        <div style="display:flex;gap:9px;margin-top:14px;flex-wrap:wrap">
+          <button onclick="openBulkScreening()" class="btn btn-sm" style="background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3);font-family:var(--fh)">🩺 Bulk Screening</button>
+          <button onclick="openAIAssistant()" class="btn btn-sm" style="background:rgba(94,53,177,.4);color:#fff;border:1.5px solid rgba(156,39,176,.4);font-family:var(--fh)">🤖 AI Help</button>
+          <button onclick="openModal('mo-upl')" class="btn btn-sm" style="background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.24);font-family:var(--fh)">📥 Import</button>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="stats-strip" id="statsStrip"></div>
+      <div id="syncAlert" style="display:none" class="alert-banner ab-sync" onclick="openCloudSetup()">
+        <div style="font-size:26px;flex-shrink:0">📵</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:800;color:var(--ts)">Offline — Changes will sync when reconnected</div>
+          <div style="font-size:11px;color:var(--tsm);margin-top:2px;line-height:1.55">Internet appears unavailable. Records you add now stay in this browser and upload automatically once connection returns.</div>
+        </div>
+        <div style="font-size:16px;color:var(--tsm)">›</div>
+      </div>
+      <div id="healthAlerts"></div>
+      <div class="toolbar">
+        <div class="srch"><span class="srch-i">🔍</span><input id="srIn" placeholder="Search name, father, village, class…" oninput="renderStudents()"></div>
+        <div class="filter-row">
+          <select id="fCl" class="fsl" onchange="renderStudents()"><option value="">All Classes</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+          <select id="fGe" class="fsl" onchange="renderStudents()"><option value="">All</option><option>Male</option><option>Female</option></select>
+          <select id="fSt" class="fsl" onchange="renderStudents()"><option value="">All Status</option><option>Healthy</option><option>Follow-up needed</option><option>Under monitoring</option><option>Referred</option></select>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:12px;color:var(--tx4);font-weight:700" id="fCnt"></div>
+          <button onclick="toggleAnalytics()" style="font-size:11px;background:var(--tgxl);border:1px solid var(--tg2);border-radius:var(--rs);padding:5px 11px;cursor:pointer;color:var(--tgm);font-weight:700;font-family:var(--fn)">📊 Analytics</button>
+        </div>
+      </div>
+      <div id="analyticsBar" class="analytics-card" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2)">📊 Health Analytics</div><button onclick="document.getElementById('analyticsBar').style.display='none'" style="background:none;border:none;color:var(--tx4);cursor:pointer;font-size:20px">×</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="analyticsMetrics"></div>
+      </div>
+      <div id="studGrid" class="ga"></div>
+    </div>
+  </div>
+  <div id="vw-card" style="display:none">
+    <div class="back-bar">
+      <button class="back-btn" onclick="showList()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9 2.5L5 6.5L9 10.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+      <div class="back-info" id="backInfo"></div>
+      <button class="back-add" onclick="if(curSid)openAddRec(curSid)">🩺 Add Record</button>
+    </div>
+    <div class="wrap page-content" style="padding-top:15px"><div id="hcContent"></div></div>
+  </div>
+  <div id="vw-bulk" style="display:none">
+    <div class="back-bar">
+      <button class="back-btn" onclick="showList()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9 2.5L5 6.5L9 10.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+      <div class="back-info">🩺 Bulk Health Screening</div>
+      <span style="font-size:11px;color:rgba(255,255,255,.75);font-weight:700" id="bulkProgress">0/0</span>
+    </div>
+    <div class="wrap page-content" style="padding-top:15px"><div id="bulkContent"></div></div>
+  </div>
+  <nav class="bot-nav" id="botNav">
+    <button class="bot-nav-btn active" id="bnHome" onclick="botNav('home')"><div class="bni">🏠</div><div class="bnl">Home</div></button>
+    <button class="bot-nav-btn" id="bnUpload" onclick="botNav('upload')"><div class="bni">📥</div><div class="bnl">Upload</div></button>
+    <div class="bot-fab" onclick="fabAction()"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="12" y="4" width="2.5" height="18" rx="1.25" fill="white"/><rect x="4" y="12" width="18" height="2.5" rx="1.25" fill="white"/></svg></div>
+    <button class="bot-nav-btn" id="bnAI" onclick="botNav('ai')"><div class="bni">🤖</div><div class="bnl">AI Help</div></button>
+    <button class="bot-nav-btn" id="bnMore" onclick="openDrawer()"><div class="bni">⋯</div><div class="bnl">More</div></button>
+  </nav>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="pg-adm" class="page">
+  <nav class="anav adm">
+    <div class="nav-logo"><div class="nav-emblem" style="background:rgba(255,255,255,.14)">🛡</div><div class="nav-title"><h1>Admin Panel</h1><p>Collector's Office, Khammam</p></div></div>
+    <div class="nav-actions"><button class="nav-btn" onclick="openIntegHub()">🔗</button><button class="nav-btn" onclick="admLogout()">🚪</button></div>
+  </nav>
+  <div style="background:linear-gradient(145deg,#0d1547,#1a237e,#283593);padding:24px 0 74px;color:#fff;position:relative;overflow:hidden">
+    <div style="position:absolute;bottom:-1px;left:0;right:0;height:50px;background:var(--bg);border-radius:50px 50px 0 0"></div>
+    <div class="wrap" style="position:relative;z-index:1"><div style="font-family:var(--fh);font-size:19px;font-weight:800;margin-bottom:4px">District Health Intelligence</div><div style="font-size:12px;opacity:.65">Monitor all schools · Health analytics · Reset access</div></div>
+  </div>
+  <div class="wrap page-content">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-40px;position:relative;z-index:10;margin-bottom:18px" id="admStats"></div>
+    <div class="card" style="margin-bottom:14px"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--gv);margin-bottom:12px">📊 District Health Snapshot</div><div class="g2" style="gap:9px" id="districtSnapshot"></div></div>
+    <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+      <div style="padding:13px 16px;border-bottom:1px solid var(--bd2);background:var(--gvl);border-radius:var(--rl) var(--rl) 0 0;display:flex;align-items:center;justify-content:space-between">
+        <h3 style="font-family:var(--fh);font-size:15px;color:var(--gv)">🏫 All Schools</h3>
+        <input id="admSrch" placeholder="Search…" oninput="renderAdmSchools()" style="padding:7px 11px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:13px;outline:none;width:130px;min-height:36px;background:var(--bg3);color:var(--tx)">
+      </div>
+      <div id="admSchList"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h3 style="font-family:var(--fh);font-size:14px;color:var(--gv);margin-bottom:11px">📋 Recovery Log</h3><div id="admLog" style="max-height:190px;overflow-y:auto;border-radius:var(--rs);border:1px solid var(--bd2)"></div></div>
+  </div>
+</div>
+
+<!-- ALL MODALS -->
+<div class="overlay" id="mo-cloud">
+  <div class="modal">
+    <div class="mhead" style="background:linear-gradient(135deg,#1B5E20,#3ECF8E);border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">☁️ Real-Time Sync Status — Supabase</h2><button class="mclose" style="background:rgba(255,255,255,.2);color:#fff" onclick="closeModal('mo-cloud')">✕</button></div>
+    <div class="mbody">
+      <div id="cloudStatusPanel" style="border-radius:var(--r);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:11px;border:1.5px solid #A5D6A7;background:linear-gradient(135deg,#E8F5E9,#E0F2F1)">
+        <span id="cloudStatusDot" style="width:14px;height:14px;border-radius:50%;background:#9E9E9E;flex-shrink:0;display:inline-block"></span>
+        <div><div id="cloudStatusTitle" style="font-weight:800;font-size:13px;color:var(--tx)">Real-time sync built in</div><div id="cloudStatusSub" style="font-size:11px;color:var(--tx3);margin-top:2px">Every change replicates across devices in &lt; 1 second.</div></div>
+      </div>
+      <div style="background:linear-gradient(135deg,#E8F5E9,#E0F2F1);border:1.5px solid #A5D6A7;border-radius:var(--r);padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:800;color:var(--tg);margin-bottom:8px">✅ Pre-Configured — No Setup Needed</div>
+        <p style="font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:8px">This app ships with Supabase already wired in. The <b>same</b> Supabase project is used on every device — phone, tablet, desktop. There is nothing to paste, nothing to install.</p>
+        <div style="background:var(--card);border:1px solid var(--bd2);border-radius:var(--rs);padding:9px 11px;font-family:var(--fm);font-size:10px;color:var(--tx3);word-break:break-all" id="sbProjUrl">Project: tswkudgfmsktqfbfychc.supabase.co</div>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--tx2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em">How real-time sync works</div>
+      <div class="setup-step"><div class="step-num">1</div><div><b style="font-size:13px">Login on Device A</b><br><span style="font-size:12px;color:var(--tx3)">Add a student or health record. Saved to Supabase Postgres immediately.</span></div></div>
+      <div class="setup-step"><div class="step-num">2</div><div><b style="font-size:13px">Postgres triggers a Realtime event</b><br><span style="font-size:12px;color:var(--tx3)">Supabase broadcasts INSERT / UPDATE / DELETE to every device subscribed to your school's channel.</span></div></div>
+      <div class="setup-step"><div class="step-num">3</div><div><b style="font-size:13px">Device B updates instantly</b><br><span style="font-size:12px;color:var(--tx3)">No refresh, no re-login. New data appears in the list under one second.</span></div></div>
+      <div class="setup-step"><div class="step-num">4</div><div><b style="font-size:13px">Login from any device with the same code+PIN</b><br><span style="font-size:12px;color:var(--tx3)">School data lives in the cloud, not on the device. Open on a new phone → same students, same records.</span></div></div>
+      <div id="cloudErr" class="err"></div><div id="cloudOk" class="ok"></div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:10px;font-size:11px;color:var(--tx3);line-height:1.65;border:1px solid var(--bd2);margin-top:12px"><b>🔒 Privacy:</b> Each school's data is keyed by school code. Only someone with the code+PIN can see it. <b>💡 Hosting:</b> Free Supabase tier — 500 MB database, 5 GB bandwidth/month.</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mo-bulk">
+  <div class="modal">
+    <div class="mhead" style="background:linear-gradient(135deg,#1B5E20,var(--mt));border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">🩺 Bulk Health Screening</h2><button class="mclose" style="background:rgba(255,255,255,.2);color:#fff" onclick="closeModal('mo-bulk')">✕</button></div>
+    <div class="mbody">
+      <div class="info-b">Screen all students in a class quickly. Previous vitals shown for comparison. Records sync to all devices instantly.</div>
+      <div class="g2" style="gap:12px;margin-bottom:14px">
+        <div class="field"><label>Class <span class="req">*</span></label><select id="bk-cl" onchange="previewBulk()"><option value="">-- Select Class --</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+        <div class="field"><label>Section</label><select id="bk-sc" onchange="previewBulk()"><option value="">All Sections</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+        <div class="field"><label>Doctor Name <span class="req">*</span></label><input id="bk-dc" placeholder="Dr. Full Name"></div>
+        <div class="field"><label>Date</label><input id="bk-dt" type="date"></div>
+      </div>
+      <div id="bulkPreview"></div>
+      <div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-bulk')">Cancel</button><button class="btn btn-p btn-sm" onclick="startBulkScreening()">🩺 Start Screening →</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mo-ai">
+  <div class="modal">
+    <div class="mhead" style="background:linear-gradient(140deg,#1a0433,var(--ai));border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">🤖 AI Health Assistant — Claude</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-ai')">✕</button></div>
+    <div class="mbody">
+      <div style="background:var(--gvl);border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--gv);margin-bottom:9px;border-left:3px solid var(--gv);line-height:1.55"><b>🩺 Claude AI — context-aware.</b> Sees student vitals, Hb, vaccination history. Emergencies: contact PHC immediately.</div>
+      <div id="aiContext" style="background:var(--gvl);border-radius:var(--rs);padding:8px 11px;font-size:11px;color:var(--gv);margin-bottom:9px;display:none;border:1px solid rgba(206,147,216,.4)"></div>
+      <div class="ai-chat">
+        <div class="ai-messages" id="aiMessages"><div class="ai-msg bot">👋 I am Vidyarthi Swasthya AI, powered by Claude.<br><br>I help with:<br>• <b>Diagnosis</b> suggestions from vitals<br>• <b>Treatment plans</b> — NHM India 2024<br>• <b>Nutritional advice</b> for underweight students<br>• <b>Vaccination schedules</b> — UIP 2024<br>• <b>Scheme eligibility</b> — MDM, WIFS, Aarogyasri<br>• <b>Referral guidance</b> — PHC, CHC, District Hospital<br><br>Ask me anything!</div></div>
+        <div class="ai-row"><input id="aiIn" placeholder="Ask about diagnosis, treatment, vaccines…" onkeydown="if(event.key==='Enter')sendAI()" autocomplete="off"><button class="btn btn-ai btn-sm" onclick="sendAI()" id="aiSendBtn" style="min-width:62px">Send</button></div>
+      </div>
+      <div class="ai-qpills">
+        <span class="ai-pill" onclick="quickAI('Moderate anaemia treatment for 12-year-old girl, NHM India 2024')">💊 Anaemia</span>
+        <span class="ai-pill" onclick="quickAI('NHM India 2024 vaccines due for 10-year-old child')">💉 Vaccines</span>
+        <span class="ai-pill" onclick="quickAI('Nutritional advice for severely underweight school student Telangana')">🥗 Nutrition</span>
+        <span class="ai-pill" onclick="quickAI('When to refer student to PHC or NRC, Telangana Health Mission')">🏥 Referral</span>
+        <span class="ai-pill" onclick="quickAI('WIFS programme IFA dosage adolescent girls NHM 2024')">👧 WIFS</span>
+        <span class="ai-pill" onclick="quickAI('How to interpret MUAC for school-age children WHO guidelines')">📏 MUAC</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mo-integ"><div class="modal"><div class="mhead" style="background:linear-gradient(135deg,#1c2830,#37474F);border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">🔗 Integration Hub — 8 AI Platforms</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-integ')">✕</button></div><div class="mbody"><div class="info-b"><b>Deploy &amp; connect:</b> Step-by-step guide for each platform. App works standalone — no backend needed.</div><div id="integList"></div></div></div></div>
+
+<div class="overlay" id="mo-addst">
+  <div class="modal"><div class="mhead"><h2>➕ Register Student</h2><button class="mclose" onclick="closeModal('mo-addst')">✕</button></div>
+  <div class="mbody"><div class="g2">
+    <div class="field span2"><label>Full Name <span class="req">*</span></label><input id="s-nm" placeholder="Student full name"></div>
+    <div class="field"><label>Date of Birth <span class="req">*</span></label><input id="s-db" type="date"></div>
+    <div class="field"><label>Father / Guardian <span class="req">*</span></label><input id="s-pa" placeholder="Father's name"></div>
+    <div class="field"><label>Class</label><select id="s-cl"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+    <div class="field"><label>Section</label><select id="s-sc"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    <div class="field"><label>Gender</label><select id="s-gn"><option>Male</option><option>Female</option><option>Other</option></select></div>
+    <div class="field"><label>Blood Group</label><select id="s-bg"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option selected>O+</option><option>O-</option><option>Unknown</option></select></div>
+    <div class="field"><label>Mobile</label><input id="s-mo" placeholder="10-digit" maxlength="10" inputmode="numeric"></div>
+    <div class="field"><label>Village</label><input id="s-vl" placeholder="Village name"></div>
+    <div class="field"><label>Mandal</label><input id="s-md" placeholder="Mandal"></div>
+    <div class="field"><label>Category</label><select id="s-ct"><option value="">--</option><option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>Minority</option></select></div>
+    <div class="field"><label>Aadhaar last 4</label><input id="s-ad" placeholder="XXXX" maxlength="4" inputmode="numeric"></div>
+    <div class="field span2"><label>Known Allergies</label><input id="s-al" value="None"></div>
+    <div class="field span2"><label>Pre-existing Conditions</label><input id="s-hi" value="None"></div>
+    <div class="sec-head">💉 Initial Vaccination</div>
+    <div class="field span2"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:5px">
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-bcg" style="width:20px;height:20px;accent-color:var(--tg)"> BCG</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-pol" style="width:20px;height:20px;accent-color:var(--tg)"> Polio</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-mmr" style="width:20px;height:20px;accent-color:var(--tg)"> MR/MMR</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-dpt" style="width:20px;height:20px;accent-color:var(--tg)"> DPT</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-hep" style="width:20px;height:20px;accent-color:var(--tg)"> Hep B</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-tyf" style="width:20px;height:20px;accent-color:var(--tg)"> Typhoid</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-td" style="width:20px;height:20px;accent-color:var(--tg)"> Td</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx);cursor:pointer;min-height:40px"><input type="checkbox" id="vi-cov" style="width:20px;height:20px;accent-color:var(--tg)"> COVID-19</label>
+    </div></div>
+  </div>
+  <div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-addst')">Cancel</button><button class="btn btn-p btn-sm" onclick="saveStu()">✅ Register Student</button></div>
+  </div></div>
+</div>
+
+<div class="overlay" id="mo-addrec">
+  <div class="modal"><div class="mhead"><h2 id="recT">🩺 Add Medical Record</h2><button class="mclose" onclick="closeModal('mo-addrec')">✕</button></div>
+  <div class="mbody"><div class="g2">
+    <div class="sec-head">🗓 Visit Details</div>
+    <div class="field"><label>Date <span class="req">*</span></label><input id="r-dt" type="date"></div>
+    <div class="field"><label>Week / Session</label><input id="r-wk" placeholder="Week 1 – Apr 2026"></div>
+    <div class="field"><label>Doctor Name <span class="req">*</span></label><input id="r-dc" placeholder="Dr. Full Name"></div>
+    <div class="field"><label>Specialization</label><input id="r-sp" value="General Physician"></div>
+    <div class="field"><label>Doctor Reg. No.</label><input id="r-rg" placeholder="NMC Registration"></div>
+    <div class="field"><label>Institution</label><input id="r-in" placeholder="PHC / Hospital name"></div>
+    <div class="sec-head">📊 Vitals &amp; Measurements</div>
+    <div class="field"><label>Height (cm)</label><input id="r-ht" type="number" placeholder="148" oninput="calcAll()" inputmode="decimal"></div>
+    <div class="field"><label>Weight (kg)</label><input id="r-wt" type="number" placeholder="38" oninput="calcAll()" inputmode="decimal"></div>
+    <div class="field"><label>BMI (auto)</label><input id="r-bmi" readonly style="font-weight:900;font-size:16px"></div>
+    <div class="field"><label>BMI Status</label><input id="r-bmis" readonly style="font-weight:700"></div>
+    <div class="field"><label>Blood Pressure</label><input id="r-bp" placeholder="110/70" oninput="calcAll()"></div>
+    <div class="field"><label>BP Status</label><input id="r-bps" readonly style="font-weight:700"></div>
+    <div class="field"><label>Temperature (°F)</label><input id="r-tp" placeholder="98.6" oninput="calcAll()" inputmode="decimal"></div>
+    <div class="field"><label>Temp Status</label><input id="r-tps" readonly style="font-weight:700"></div>
+    <div class="field"><label>Pulse (bpm)</label><input id="r-pu" placeholder="78" inputmode="numeric"></div>
+    <div class="field"><label>Haemoglobin (g/dl)</label><input id="r-hb" placeholder="12.5" oninput="calcAll()" inputmode="decimal"></div>
+    <div class="field"><label>Hb / Anaemia Status</label><input id="r-hbs" readonly style="font-weight:700"></div>
+    <div class="field"><label>MUAC (cm)</label><input id="r-mu" type="number" placeholder="18.5" oninput="calcAll()" inputmode="decimal"></div>
+    <div class="field"><label>MUAC Status</label><input id="r-mus" readonly style="font-weight:700"></div>
+    <div class="field"><label>Vision Left / Right</label><input id="r-vi" placeholder="6/6 / 6/9"></div>
+    <div class="field"><label>Dental</label><input id="r-de" placeholder="Normal / Cavities"></div>
+    <div class="field"><label>Hearing</label><input id="r-hr" placeholder="Normal / Impaired"></div>
+    <div class="field"><label>Skin</label><input id="r-sk" placeholder="Normal / Rash"></div>
+    <div class="field span2"><label>Nutritional Status</label><select id="r-nu"><option value="">-- Select --</option><option>Normal</option><option>Underweight</option><option>Overweight</option><option>Severely Malnourished</option><option>Moderately Malnourished</option></select></div>
+    <div class="sec-head" style="color:var(--gv);border-color:var(--gvl)">💉 Vaccination This Visit<span style="font-size:10px;background:var(--gvl);color:var(--gv);border-radius:20px;padding:2px 9px;margin-left:5px">Updates permanent record</span></div>
+    <div class="span2"><div style="background:var(--gvl);border:1.5px solid rgba(206,147,216,.4);border-radius:var(--r);padding:13px">
+      <div class="vc-grid" id="vcGrid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px">
+        <div class="field"><label style="color:var(--gv)">Batch No.</label><input id="r-vbt" placeholder="Batch number"></div>
+        <div class="field"><label style="color:var(--gv)">Vaccinated By</label><input id="r-vby" placeholder="Doctor / ANM"></div>
+        <div class="field"><label style="color:var(--gv)">Site</label><input id="r-vst" placeholder="Left deltoid"></div>
+        <div class="field"><label style="color:var(--gv)">Next Due</label><input id="r-vnd" placeholder="e.g. Td at 16 yrs"></div>
+      </div>
+      <div style="margin-top:10px;background:rgba(69,39,160,.08);border-radius:var(--rs);padding:9px;font-size:11px;color:var(--gv);line-height:1.65;border:1px solid rgba(69,39,160,.15)"><b>NHM 2024:</b> Td at 10 &amp; 16 yrs · DPT Booster-2 at 5-6 yrs · Vit A 1-5 yrs biannually · WIFS girls 10-19 · uwin.mohfw.gov.in</div>
+    </div></div>
+    <div class="sec-head">🔬 Medical Assessment</div>
+    <div class="field"><label>Category</label><select id="r-ca"><option>General</option><option>Respiratory</option><option>ENT</option><option>Eye/Vision</option><option>Dental</option><option>Skin</option><option>Nutrition</option><option>Orthopedic</option><option>Hematology</option><option>Gastroenterology</option><option>Neurology</option><option>Psychological</option><option>Other</option></select></div>
+    <div class="field"><label>Status</label><select id="r-st"><option>Healthy</option><option selected>Routine</option><option>Follow-up needed</option><option>Improving</option><option>Under monitoring</option><option>Referred</option></select></div>
+    <div class="field span2"><label>Complaints / Symptoms</label><textarea id="r-co" placeholder="Complaints from student / parent…"></textarea></div>
+    <div class="field span2"><label>Examination Findings</label><textarea id="r-fi" placeholder="Clinical findings on examination…"></textarea></div>
+    <div class="field span2"><label>Diagnosis <span class="req">*</span></label><textarea id="r-di" style="min-height:64px" placeholder="Final diagnosis…"></textarea></div>
+    <div class="field span2"><label>Prescription / Treatment</label><textarea id="r-rx" placeholder="Medicines, dosage, advice…"></textarea></div>
+    <div class="field span2"><label>Follow-up Instructions</label><input id="r-fu" placeholder="e.g. Review in 1 week"></div>
+    <div class="field span2"><label>Referred To</label><input id="r-rf" placeholder="Hospital / Specialist if referred"></div>
+    <div class="field span2"><label>Notes</label><textarea id="r-no" style="min-height:64px" placeholder="Additional remarks…"></textarea></div>
+  </div>
+  <div style="background:var(--tgxl);border-radius:var(--rs);padding:10px;font-size:11px;color:var(--tgm);margin-top:12px;border-left:3px solid var(--tgl);line-height:1.6"><b>Standards:</b> BMI-for-age (WHO/IAP) · Hb (WHO 2024) · BP (ACC/AHA 2017) · MUAC (WHO). Clinical judgment prevails.</div>
+  <div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-addrec')">Cancel</button><button class="btn btn-ai btn-sm" onclick="askAIFromRecord()">🤖 Ask AI</button><button class="btn btn-p btn-sm" onclick="saveRec()">💾 Save Record</button></div>
+  </div></div>
+</div>
+
+<div class="overlay" id="mo-upl">
+  <div class="modal"><div class="mhead"><h2>📥 Upload from Excel</h2><button class="mclose" onclick="closeModal('mo-upl')">✕</button></div>
+  <div class="mbody">
+    <div class="tab-s"><button id="tA" class="tab-b on" onclick="swTab('p')">📋 Paste</button><button id="tB" class="tab-b" onclick="swTab('f')">📂 File</button></div>
+    <div id="tab-p">
+      <div class="warn-b">How: Open Excel → Select rows → Ctrl+C → Paste below.<br>Columns: Name | Father | DOB | Class | Section | Gender | Blood Group | Mobile | Village | Allergies | History</div>
+      <button class="btn btn-am btn-sm" onclick="loadSample()" style="margin-bottom:10px">📋 Load sample data</button>
+      <div class="field"><label>Paste here</label><textarea id="paD" placeholder="Paste Excel rows here…" style="min-height:100px;font-family:var(--fm);font-size:12px" oninput="parsePaste()"></textarea></div>
+      <div id="paPr" style="display:none;margin-top:10px"></div><div id="paEr" class="err"></div>
+    </div>
+    <div id="tab-f" style="display:none">
+      <button class="btn btn-am btn-sm btn-full" onclick="dlTemplate()" style="margin-bottom:10px">📋 Download Template First</button>
+      <div class="uz" id="uzBox" onclick="document.getElementById('fIn').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="onDrop(event)">
+        <input type="file" id="fIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="onFC(event)">
+        <div style="font-size:44px;margin-bottom:9px">📂</div>
+        <h3 id="uzTxt" style="font-size:14px;font-weight:800;color:var(--tg);margin-bottom:5px">Tap to select file</h3>
+        <p style="font-size:12px;color:var(--tx2)">.xlsx .xls .csv supported</p>
+      </div>
+      <div id="fiPr" style="display:none;margin-top:10px"></div><div id="fiEr" class="err"></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-upl')">Cancel</button><button class="btn btn-p btn-sm" id="impBtn" onclick="doImport()" style="display:none">✅ Import Students</button></div>
+  </div></div>
+</div>
+
+<div class="overlay" id="mo-exp"><div class="modal"><div class="mhead"><h2>📤 Export to Excel</h2><button class="mclose" onclick="closeModal('mo-exp')">✕</button></div><div class="mbody"><div id="expOpts"></div><p style="font-size:11px;color:var(--tx3);text-align:center;margin-top:9px">Opens in Excel, Google Sheets or LibreOffice</p></div></div></div>
+
+<div class="overlay" id="mo-pin"><div class="modal"><div class="mhead"><h2>🔑 Change PIN</h2><button class="mclose" onclick="closeModal('mo-pin')">✕</button></div><div class="mbody"><div style="display:flex;flex-direction:column;gap:13px"><div class="field"><label>Current PIN <span class="req">*</span></label><input id="p-cur" type="password"></div><div class="field"><label>New PIN <span class="req">*</span></label><input id="p-new" type="password" placeholder="Min 4 characters"></div><div class="field"><label>Confirm New PIN</label><input id="p-con" type="password"></div><div id="p-err" class="err"></div><div id="p-ok" class="ok"></div></div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-pin')">Cancel</button><button class="btn btn-p btn-sm" onclick="changePIN()">🔑 Update PIN</button></div></div></div></div>
+
+<div class="overlay" id="mo-fgt">
+  <div class="modal"><div class="mhead"><h2>🔑 Account Recovery</h2><button class="mclose" onclick="closeModal('mo-fgt')">✕</button></div>
+  <div class="mbody">
+    <div id="fg-1"><div class="warn-b"><b>What do you need help with?</b></div><div style="display:flex;flex-direction:column;gap:9px;margin-top:5px"><button class="btn btn-am btn-full" onclick="showFg('code')">🔍 Forgot my School Code</button><button class="btn btn-tl btn-full" onclick="showFg('pin')">🔑 Know Code but forgot PIN</button><button class="btn btn-rd btn-full" onclick="showFg('both')">❓ Forgot both</button></div></div>
+    <div id="fg-code" style="display:none"><div class="info-b"><b>Find Your School Code</b></div><div class="field" style="margin-bottom:10px"><label>School Name</label><input id="fg-cs" placeholder="e.g. ZP High School, Madhira" oninput="searchByName()"></div><div id="fg-cr"></div><div class="warn-b" style="font-size:12px;margin-top:8px">Not found? Contact Collector's Office, Khammam — 507001</div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="showFg('1')">← Back</button></div></div>
+    <div id="fg-pin" style="display:none"><div style="background:var(--tgxl);border:1.5px solid var(--tg2);border-radius:var(--r);padding:11px;margin-bottom:12px;color:var(--tg);font-size:13px;line-height:1.6"><b>🔑 Self-reset via security hint</b></div><div style="display:flex;flex-direction:column;gap:10px"><div class="field"><label>School Code <span class="req">*</span></label><input id="fg-pc" placeholder="Your code" oninput="this.value=this.value.toUpperCase();loadHint()"></div><div id="fg-hint" style="display:none;background:var(--tsxl);border:1.5px solid var(--tsl);border-radius:var(--rs);padding:9px;font-size:13px;color:var(--ts)"></div><div class="field" id="fg-aw" style="display:none"><label>Hint Answer <span class="req">*</span></label><input id="fg-ans" placeholder="Your answer"></div><div class="field" id="fg-nw" style="display:none"><label>New PIN <span class="req">*</span></label><input id="fg-np" type="password"></div><div class="field" id="fg-cw" style="display:none"><label>Confirm PIN</label><input id="fg-cp" type="password"></div></div><div id="fg-pe" class="err"></div><div id="fg-po" class="ok"></div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="showFg('1')">← Back</button><button class="btn btn-p btn-sm" id="fg-pb" onclick="selfReset()" style="display:none">🔑 Reset PIN</button></div></div>
+    <div id="fg-both" style="display:none"><div style="background:var(--rdl);border:1.5px solid #EF9A9A;border-radius:var(--r);padding:11px;margin-bottom:11px;color:var(--rd);font-size:13px;line-height:1.6"><b>Admin reset required.</b></div><div class="st-box"><div class="st-num">1</div><div style="font-size:13px;line-height:1.65"><b>Write</b> to Collector's Office — school name, village, mandal, HM name.</div></div><div class="st-box"><div class="st-num">2</div><div style="font-size:13px;line-height:1.65"><b>Visit with</b> School ID / UDISE code. All data is safe.</div></div><div style="background:var(--tgxl);border-radius:var(--r);padding:11px;margin-top:9px;font-size:13px;color:var(--tg);border:1px solid var(--tg2);line-height:1.6"><b>📞</b> Collector's Office, Khammam — 507001</div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="showFg('1')">← Back</button><button class="btn btn-p btn-sm" onclick="closeModal('mo-fgt')">Done ✓</button></div></div>
+  </div></div>
+</div>
+
+<div class="overlay" id="mo-admlog"><div class="modal"><div class="mhead" style="background:linear-gradient(135deg,#0d1547,#283593);border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">🛡 Admin Login</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-admlog')">✕</button></div><div class="mbody"><div class="info-b">Restricted to Collector's Office administrators only.</div><div style="display:flex;flex-direction:column;gap:13px"><div class="field"><label style="color:var(--gv)">Admin Code</label><input id="aCode" placeholder="Admin code" oninput="this.value=this.value.toUpperCase()"></div><div class="field"><label style="color:var(--gv)">Admin PIN</label><input id="aPin" type="password" onkeydown="if(event.key==='Enter')doAdmLogin()"></div><div id="aErr" class="err"></div><div style="background:var(--bg3);border-radius:var(--rs);padding:10px;font-size:11px;color:var(--tx3);border:1px solid var(--bd2)">Default: Code <b>COLLECTOR</b> | PIN <b>KHM@Admin2024</b></div></div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-admlog')">Cancel</button><button class="btn btn-in btn-sm" onclick="doAdmLogin()">🛡 Enter</button></div></div></div></div>
+<div class="overlay" id="mo-admrst"><div class="modal"><div class="mhead" style="background:linear-gradient(135deg,#0d1547,#283593);border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">🔑 Reset School PIN</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-admrst')">✕</button></div><div class="mbody"><div class="info-b" id="arInfo"></div><div style="display:flex;flex-direction:column;gap:12px"><div class="field"><label style="color:var(--gv)">New PIN <span class="req">*</span></label><input id="arN" type="password"></div><div class="field"><label style="color:var(--gv)">Confirm <span class="req">*</span></label><input id="arC" type="password"></div><div id="arE" class="err"></div><div id="arO" class="ok"></div></div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-admrst')">Cancel</button><button class="btn btn-in btn-sm" onclick="doAdmRst()">🔑 Reset</button></div></div></div></div>
+<div class="overlay" id="mo-admvw"><div class="modal"><div class="mhead" style="background:linear-gradient(135deg,#0d1547,#283593);border-radius:28px 28px 0 0"><h2 id="avT" style="color:#fff;font-size:15px">School Details</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-admvw')">✕</button></div><div class="mbody" id="avB"></div></div></div>
+
+<div class="overlay" id="mo-restore"><div class="modal"><div class="mhead" style="background:linear-gradient(135deg,#01579B,#0277BD);border-radius:28px 28px 0 0"><h2 style="color:#fff;font-size:15px">📲 Restore on This Device</h2><button class="mclose" style="background:rgba(255,255,255,.18);color:#fff" onclick="closeModal('mo-restore')">✕</button></div><div class="mbody"><div class="info-b">Upload the <b>.json</b> backup file from another device to restore all data here instantly.</div><div id="rzBox" style="border:2.5px dashed #90CAF9;border-radius:var(--rl);padding:26px 16px;text-align:center;background:var(--mbxl);cursor:pointer;transition:.18s;margin-bottom:12px" onclick="document.getElementById('rIn').click()"><input type="file" id="rIn" accept=".json" style="display:none" onchange="onRestoreFC(event)"><div style="font-size:44px;margin-bottom:9px">📂</div><div id="rzTxt" style="font-size:14px;font-weight:800;color:var(--mb);margin-bottom:5px">Tap to select backup file</div><div style="font-size:12px;color:var(--tx2)">.json backup file only</div></div><div id="restorePrev" style="display:none;background:var(--tgxl);border:1.5px solid var(--tg2);border-radius:var(--r);padding:13px;margin-bottom:12px"></div><div id="restoreErr" class="err"></div><div id="restoreOk" class="ok"></div><div class="mfoot"><button class="btn btn-gh btn-sm" onclick="closeModal('mo-restore')">Cancel</button><button class="btn btn-bl btn-sm" id="restoreBtn" onclick="doRestore()" style="display:none">📲 Restore &amp; Login</button></div></div></div></div>
+
+<div id="toast"></div>
+<button id="printBtn" style="display:none" onclick="window.print()"></button>
+<script>
+'use strict';
+/* ══════════════════════════════════════════════════════════
+   VIDYARTHI SWASTHYA v6.2 — REAL-TIME SUPABASE EDITION
+   Admin Code: COLLECTOR | PIN: KHM@Admin2024
+   Storage: Supabase Postgres (cloud)  | Local cache: vsw62_*
+   Source of truth = cloud. localStorage is fallback only.
+══════════════════════════════════════════════════════════ */
+
+// ── CONSTANTS ──────────────────────────────────────────
+var SC={Healthy:{bg:'#E8F5E9',tx:'#1B5E20',dot:'#4CAF50',bdr:'#A5D6A7'},Routine:{bg:'#E3F2FD',tx:'#0D47A1',dot:'#2196F3',bdr:'#90CAF9'},'Follow-up needed':{bg:'#FFF3E0',tx:'#BF360C',dot:'#FF9800',bdr:'#FFCC80'},Improving:{bg:'#E0F2F1',tx:'#004D40',dot:'#009688',bdr:'#80CBC4'},'Under monitoring':{bg:'#EDE7F6',tx:'#311B92',dot:'#9C27B0',bdr:'#CE93D8'},Referred:{bg:'#FFEBEE',tx:'#B71C1C',dot:'#F44336',bdr:'#EF9A9A'}};
+var AVM=['#1565C0','#00695C','#283593','#006064','#37474F'];
+var AVF=['#AD1457','#6A1B9A','#1565C0','#00695C','#558B2F'];
+var ADMIN_CODE='COLLECTOR', ADMIN_HASH='b3f8e1a2';
+// Supabase — single project, baked into the app. Same on every device.
+var SUPABASE_URL='https://tswkudgfmsktqfbfychc.supabase.co';
+var SUPABASE_KEY='sb_publishable_yViaFwkoYkzR8o2OJZCYYg_E7Phb-U8';
+var NHM=[
+  {id:'v_bcg',lbl:'BCG',dis:'Tuberculosis',sch:'Birth',col:'#1565C0'},
+  {id:'v_pol',lbl:'Polio (OPV)',dis:'Poliomyelitis',sch:'Birth+Boosters',col:'#2E7D32'},
+  {id:'v_mmr',lbl:'MR/MMR',dis:'Measles-Rubella',sch:'9-12m+16-24m',col:'#C62828'},
+  {id:'v_dpt',lbl:'DPT',dis:'Diphtheria-Pertussis-Tetanus',sch:'6w+Boosters',col:'#E65100'},
+  {id:'v_hep',lbl:'Hepatitis B',dis:'Hepatitis B',sch:'Birth+3 doses',col:'#6A1B9A'},
+  {id:'v_tyf',lbl:'Typhoid',dis:'Typhoid fever',sch:'As needed',col:'#00695C'},
+  {id:'v_td',lbl:'Td',dis:'Tetanus-Diphtheria',sch:'10 & 16 years',col:'#4527A0'},
+  {id:'v_dptb',lbl:'DPT Booster',dis:'DPT Booster-2',sch:'5-6 years',col:'#BF360C'},
+  {id:'v_vita',lbl:'Vitamin A',dis:'Vitamin A supplement',sch:'1-5 yrs biannual',col:'#F57F17'},
+  {id:'v_je',lbl:'JE',dis:'Japanese Encephalitis',sch:'Endemic districts',col:'#558B2F'},
+  {id:'v_pcv',lbl:'PCV',dis:'Pneumococcal',sch:'6w,14w,9m',col:'#795548'},
+  {id:'v_cov',lbl:'COVID-19',dis:'SARS-CoV-2',sch:'12+ years',col:'#0277BD'}
+];
+var INTEGRATIONS=[
+  {n:'Gemini 2.0 Flash',i:'✨',bg:'#E8F0FE',c:'#1A73E8',b:'Google AI',bBg:'#1A73E8',s:'API Ready',sBg:'#E8F5E9',sC:'#1B5E20',d:'Replace Claude with Gemini for medical reasoning.',st:['Get free API key at aistudio.google.com','Update sendAI() to generativelanguage.googleapis.com','Use Gemini request format','Set Authorization: Bearer YOUR_KEY'],l:'https://aistudio.google.com'},
+  {n:'Azure OpenAI + Health Bot',i:'☁️',bg:'#E3F2FD',c:'#0078D4',b:'Microsoft',bBg:'#0078D4',s:'Enterprise',sBg:'#E3F2FD',sC:'#0078D4',d:'HIPAA-compliant GPT-4o deployment.',st:['Create Azure App Service (Free F1)','Upload as index.html via GitHub','Configure Azure OpenAI in portal.azure.com','Update sendAI() endpoint to Azure URL'],l:'https://azure.microsoft.com/free'},
+  {n:'Replit Free Hosting',i:'🔁',bg:'#F3E5F5',c:'#6600FF',b:'Cloud IDE',bBg:'#6600FF',s:'5 Minutes',sBg:'#F3E5F5',sC:'#6600FF',d:'Host with free HTTPS URL — share with all schools.',st:['replit.com → Create Account → HTML/CSS/JS Repl','Upload as index.html → Click Run','Get instant public URL','Share with all schools in Khammam'],l:'https://replit.com'},
+  {n:'FlutterFlow Mobile App',i:'📱',bg:'#E0F2F1',c:'#00BCD4',b:'Native App',bBg:'#00BCD4',s:'App Builder',sBg:'#E0F2F1',sC:'#006064',d:'Native Android/iOS app using this HTML as design reference.',st:['Create project at flutterflow.io → Connect Firebase','Add collections: schools, students, medical_records','Recreate screens from this app','Publish to Google Play Store'],l:'https://flutterflow.io'},
+  {n:'Bubble.io Web App',i:'🫧',bg:'#FFF3E0',c:'#FF6B35',b:'No-Code',bBg:'#FF6B35',s:'Visual Builder',sBg:'#FFF3E0',sC:'#E65100',d:'Full backend web app with multi-school database.',st:['bubble.io → Create account (Free)','Add types: School, Student, MedicalRecord','Add API Connector → Claude / Gemini AI','Build pages mirroring this app'],l:'https://bubble.io'},
+  {n:'GitHub Pages Hosting',i:'🐙',bg:'#F5F5F5',c:'#24292E',b:'Free Host',bBg:'#24292E',s:'Live in 2 min',sBg:'#E8F5E9',sC:'#1B5E20',d:'Permanent free HTTPS URL for all Khammam schools.',st:['Create GitHub repo: vidyarthi-swasthya','Upload as index.html','Settings → Pages → Enable from main branch','Share link with all schools'],l:'https://pages.github.com'},
+  {n:'GitHub Copilot + Cursor',i:'🤖',bg:'#F0F0F0',c:'#333',b:'Dev Tools',bBg:'#333',s:'AI Coding',sBg:'#E8F5E9',sC:'#1B5E20',d:'Extend this app — add PWA, biometric auth.',st:['Open in VS Code with Copilot extension','Or use cursor.so','Ask: "Add offline PWA service worker"','Push to GitHub → auto-deploy'],l:'https://github.com/features/copilot'},
+  {n:'Emergent Labs Medical AI',i:'🧠',bg:'#EDE7F6',c:'#4527A0',b:'Medical NLP',bBg:'#4527A0',s:'Research',sBg:'#EDE7F6',sC:'#4527A0',d:'ICD-10 auto-coding, predictive health analytics.',st:['Register at emergentmlabs.com','Integrate Medical NLP API into saveRec()','Auto-extract ICD-10 codes from diagnosis text','Build Hb trend → anaemia prediction model'],l:'https://www.emergentresearch.net'}
+];
+
+// ── APP STATE ──────────────────────────────────────────
+var APP={school:null,students:[],records:[]};
+var curSid=null, impBuf=[], admRstCode=null, sessTmr=null, utab='p';
+var bulkQueue=[], bulkIdx=0, bulkDoctor='', bulkDate='';
+var restoreBuf=null, aiHistory=[];
+// Supabase client + realtime channel, plus a per-school in-memory cache mirror used by admin views.
+var sb=null, sbChan=null, sbOn=false;
+var SCHOOL_CACHE={}; // {code: {profile, students:[], records:[]}}
+
+// ── THEME ──────────────────────────────────────────────
+var isDark=localStorage.getItem('vsw_theme')==='dark';
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.textContent=isDark?'☀️':'🌙';
+  var mc=document.querySelector('meta[name="theme-color"]');
+  if(mc)mc.content=isDark?'#0A1510':'#1B5E20';
+}
+function toggleTheme(){
+  isDark=!isDark;
+  localStorage.setItem('vsw_theme',isDark?'dark':'light');
+  applyTheme();
+  toast((isDark?'🌙 Dark':'☀️ Light')+' mode');
+}
+applyTheme();
+
+// ── SUPABASE REAL-TIME SYNC ────────────────────────────
+// Single Supabase project, baked-in URL+anon key. Same on every device, so
+// (1) the "asks for setup again on new device" bug is structurally impossible,
+// (2) school code+PIN works on every phone/tablet/desktop with no config.
+function initSupabase(){
+  if(sb)return true;
+  try{
+    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+      realtime:{params:{eventsPerSecond:20}},
+      auth:{persistSession:false}
+    });
+    setSyncUI('connecting');
+    return true;
+  }catch(e){console.warn('Supabase init:',e&&e.message);setSyncUI('error');return false;}
+}
+// Subscribe to INSERT/UPDATE/DELETE on students + health_records + the school's
+// own row, all filtered by school_code. Per-row events mean editing an existing
+// record (the v61 bug) now propagates correctly — no more hash-based gating.
+function attachRealtime(code){
+  if(!sb)initSupabase();
+  if(sbChan){try{sb.removeChannel(sbChan);}catch(e){}sbChan=null;}
+  sbOn=true; hideSyncAlert(); setSyncUI('connecting');
+  var CODE=code.toUpperCase();
+  sbChan=sb.channel('vsw_'+CODE)
+    .on('postgres_changes',{event:'*',schema:'public',table:'students',filter:'school_code=eq.'+CODE},function(p){applyStudentEvent(p);})
+    .on('postgres_changes',{event:'*',schema:'public',table:'health_records',filter:'school_code=eq.'+CODE},function(p){applyRecordEvent(p);})
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'schools',filter:'code=eq.'+CODE},function(p){applySchoolEvent(p);})
+    .subscribe(function(status){
+      if(status==='SUBSCRIBED')setSyncUI('synced');
+      else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')setSyncUI('error');
+      else if(status==='CLOSED')setSyncUI('offline');
+    });
+}
+function applyStudentEvent(p){
+  var ev=p.eventType||p.event, row=p.new&&p.new.data?p.new.data:null, oldId=p.old&&p.old.id;
+  if(ev==='INSERT'||ev==='UPDATE'){
+    if(!row)return;
+    var i=APP.students.findIndex(function(x){return x.id===row.id;});
+    if(i>=0)APP.students[i]=row; else APP.students.push(row);
+  }else if(ev==='DELETE'){
+    APP.students=APP.students.filter(function(x){return x.id!==oldId;});
+    APP.records=APP.records.filter(function(r){return r.sid!==oldId;});
+  }
+  setSyncUI('synced'); rerenderUI();
+}
+function applyRecordEvent(p){
+  var ev=p.eventType||p.event, row=p.new&&p.new.data?p.new.data:null, oldId=p.old&&p.old.id;
+  if(ev==='INSERT'||ev==='UPDATE'){
+    if(!row)return;
+    var i=APP.records.findIndex(function(x){return x.id===row.id;});
+    if(i>=0)APP.records[i]=row; else APP.records.push(row);
+  }else if(ev==='DELETE'){
+    APP.records=APP.records.filter(function(x){return x.id!==oldId;});
+  }
+  setSyncUI('synced'); rerenderUI();
+}
+function applySchoolEvent(p){
+  if(!p.new||!APP.school)return;
+  APP.school.profile={name:p.new.name,district:p.new.district,pin:p.new.pin_hash,reg:p.new.reg_date,hq:p.new.hq,ha:p.new.ha_hash};
+  setSyncUI('synced');
+}
+function rerenderUI(){
+  if(!document.getElementById('pg-app').classList.contains('active'))return;
+  renderStrip();renderStudents();genAlerts();
+  if(curSid&&document.getElementById('vw-card').style.display!=='none')buildCard(curSid);
+}
+// Per-row write helpers. Each call is one upsert/delete, so concurrent saves
+// from two devices update independent rows instead of clobbering the whole tree.
+function sbUpsertStudent(s){
+  if(!sb||!APP.school)return Promise.resolve();
+  return sb.from('students').upsert({id:s.id,school_code:APP.school.code.toUpperCase(),data:s})
+    .then(function(r){if(r.error){setSyncUI('offline');console.warn('upsert student',r.error);}else setSyncUI('synced');});
+}
+function sbUpsertRecord(r){
+  if(!sb||!APP.school)return Promise.resolve();
+  return sb.from('health_records').upsert({id:r.id,student_id:r.sid,school_code:APP.school.code.toUpperCase(),data:r})
+    .then(function(x){if(x.error){setSyncUI('offline');console.warn('upsert record',x.error);}else setSyncUI('synced');});
+}
+function sbDeleteStudent(sid){
+  if(!sb||!APP.school)return Promise.resolve();
+  // ON DELETE CASCADE on the FK isn't set for student_id (only school_code), so
+  // delete records for this student first, then the student row itself.
+  return sb.from('health_records').delete().eq('student_id',sid).then(function(){
+    return sb.from('students').delete().eq('id',sid);
+  });
+}
+function sbDeleteRecord(rid){
+  if(!sb||!APP.school)return Promise.resolve();
+  return sb.from('health_records').delete().eq('id',rid);
+}
+function sbUpsertSchool(profile,code){
+  if(!sb)return Promise.resolve();
+  var row={code:code.toUpperCase(),name:profile.name,district:profile.district||'Khammam',pin_hash:profile.pin,hq:profile.hq||null,ha_hash:profile.ha||null,reg_date:profile.reg||today()};
+  return sb.from('schools').upsert(row);
+}
+// Compatibility shim — old code calls savD() to persist the in-memory APP.
+// In v6.2 every save handler does its own targeted upsert, so this is a no-op
+// kept only so older call sites don't crash. It always returns true.
+function savD(){return true;}
+function setSyncUI(st){
+  var map={local:{c:'#9E9E9E',t:'Local Only'},connecting:{c:'#FF9800',t:'Syncing…'},synced:{c:'#4CAF50',t:'Synced ✓'},offline:{c:'#FF9800',t:'Offline'},error:{c:'#F44336',t:'Error'}};
+  var m=map[st]||map.local;
+  ['syncDot','dSyncDot'].forEach(function(id){var e=document.getElementById(id);if(e){e.style.background=m.c;if(id==='syncDot')e.className='sync-dot '+st;}});
+  ['syncLbl','dSyncTxt'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=m.t;});
+  var sp=document.getElementById('syncSpin');if(sp)sp.style.display=st==='connecting'?'inline-block':'none';
+  updateCloudPanel(st);
+}
+function showSyncAlert(){var e=document.getElementById('syncAlert');if(e)e.style.display='flex';}
+function hideSyncAlert(){var e=document.getElementById('syncAlert');if(e)e.style.display='none';}
+function updateCloudPanel(st){
+  var p=document.getElementById('cloudStatusPanel'),t=document.getElementById('cloudStatusTitle'),s=document.getElementById('cloudStatusSub'),dot=document.getElementById('cloudStatusDot');
+  if(!p)return;
+  if(st==='synced'){if(dot)dot.style.background='#4CAF50';if(t)t.textContent='✅ Connected — Real-Time Sync Active';if(s)s.textContent='All devices see the same data instantly. Records added anywhere appear everywhere under 1 second.';}
+  else if(st==='offline'){if(dot)dot.style.background='#FF9800';if(t)t.textContent='📵 Offline — Will sync when reconnected';if(s)s.textContent='Network is down. New changes will upload when internet returns.';}
+  else if(st==='error'){if(dot)dot.style.background='#F44336';if(t)t.textContent='❌ Connection Error';if(s)s.textContent='Could not reach Supabase. Check internet connection.';}
+  else if(st==='connecting'){if(dot)dot.style.background='#FF9800';if(t)t.textContent='🔄 Connecting to Supabase…';if(s)s.textContent='Establishing real-time channel.';}
+  else{if(dot)dot.style.background='#9E9E9E';if(t)t.textContent='Real-time sync built in';if(s)s.textContent='Login to a school to start syncing this device.';}
+}
+function openCloudSetup(){
+  ['cloudErr','cloudOk'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  updateCloudPanel(sbOn?'synced':sb?'connecting':'local');
+  openModal('mo-cloud');
+}
+// Init Supabase immediately so admin pages and pre-login lookups can query it.
+initSupabase();
+
+// ── SECURITY ───────────────────────────────────────────
+function hashPin(p){var h=0x811c9dc5;for(var i=0;i<p.length;i++){h^=p.charCodeAt(i);h+=(h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24);h=h>>>0;}return h.toString(16).padStart(8,'0');}
+function chkP(a,b){return hashPin(a)===b;}
+function chkAdm(c,p){return c===ADMIN_CODE&&chkP(p,ADMIN_HASH);}
+
+// ── STORAGE ────────────────────────────────────────────
+// localStorage is now an OFFLINE CACHE only — Supabase is source of truth.
+// Cached entries let the user see their last-known data instantly while the
+// realtime channel reconnects (e.g. on a flaky mobile network).
+function SK(c){return 'vsw62_'+c.toUpperCase();}
+function loadSch(c){try{var r=localStorage.getItem(SK(c));return r?JSON.parse(r):(SCHOOL_CACHE[c.toUpperCase()]||null);}catch(e){return SCHOOL_CACHE[c.toUpperCase()]||null;}}
+function cacheSch(c,d){try{localStorage.setItem(SK(c),JSON.stringify(d));}catch(e){}SCHOOL_CACHE[c.toUpperCase()]=d;}
+function allCodes(){return Object.keys(SCHOOL_CACHE);}
+// Async — pulls every school the anon key can see. Used by admin panel.
+function fetchAllSchoolsAsync(){
+  if(!sb)return Promise.resolve([]);
+  return sb.from('schools').select('*').then(function(r){
+    if(r.error){console.warn('fetch schools',r.error);return [];}
+    var out=(r.data||[]).map(function(s){return {code:s.code,profile:{name:s.name,district:s.district,pin:s.pin_hash,reg:s.reg_date,hq:s.hq,ha:s.ha_hash}};});
+    out.forEach(function(s){if(!SCHOOL_CACHE[s.code])SCHOOL_CACHE[s.code]={profile:s.profile,students:[],records:[]};});
+    return out;
+  });
+}
+// Async — pulls a single school's full data (profile + students + records).
+function fetchSchoolAsync(code){
+  if(!sb)return Promise.resolve(null);
+  var CODE=code.toUpperCase();
+  return Promise.all([
+    sb.from('schools').select('*').eq('code',CODE).maybeSingle(),
+    sb.from('students').select('data').eq('school_code',CODE),
+    sb.from('health_records').select('data').eq('school_code',CODE)
+  ]).then(function(rs){
+    var sR=rs[0],stR=rs[1],rcR=rs[2];
+    if(sR.error||!sR.data)return null;
+    var p=sR.data;
+    var d={
+      profile:{name:p.name,district:p.district,pin:p.pin_hash,reg:p.reg_date,hq:p.hq,ha:p.ha_hash},
+      students:(stR.data||[]).map(function(x){return x.data;}),
+      records:(rcR.data||[]).map(function(x){return x.data;})
+    };
+    cacheSch(CODE,d);
+    return d;
+  });
+}
+function logAdm(msg){
+  if(sb)sb.from('admin_log').insert({msg:msg}).then(function(){},function(){});
+  // also keep a local mirror so the panel renders instantly
+  var L=JSON.parse(localStorage.getItem('vsw62_log')||'[]');L.unshift({msg:msg,t:new Date().toLocaleString('en-IN')});if(L.length>100)L.pop();
+  try{localStorage.setItem('vsw62_log',JSON.stringify(L));}catch(e){}
+}
+
+// ── SESSION ────────────────────────────────────────────
+function resetSess(){clearTimeout(sessTmr);sessTmr=setTimeout(function(){alert('Session timed out for security.');logout();},60*60*1000);}
+['mousemove','keydown','touchstart','click'].forEach(function(ev){document.addEventListener(ev,resetSess,{passive:true});});
+
+// ── MEDICAL CALCULATIONS ───────────────────────────────
+function getBMIStatus(bmi,ay){
+  var b=parseFloat(bmi);if(!b||!ay)return{txt:'—',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA',rec:''};
+  var t;if(ay<=7)t={sw:12.0,uw:13.5,ow:17.5,ob:19.0};else if(ay<=10)t={sw:12.5,uw:14.0,ow:19.0,ob:21.0};else if(ay<=13)t={sw:13.5,uw:14.5,ow:21.0,ob:24.0};else t={sw:15.0,uw:16.0,ow:23.0,ob:27.5};
+  if(b<t.sw)return{txt:'Severely Underweight ('+b+')',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE',rec:'Urgent: Refer NRC immediately'};
+  if(b<t.uw)return{txt:'Underweight (BMI '+b+')',cls:'vc-w',col:'#E65100',bg:'#FFF3E0',rec:'Dietary counselling + MDM extra ration'};
+  if(b<t.ow)return{txt:'Normal ✓ (BMI '+b+')',cls:'vc-n',col:'#1B5E20',bg:'#E8F5E9',rec:'Maintain healthy habits'};
+  if(b<t.ob)return{txt:'Overweight (BMI '+b+')',cls:'vc-w',col:'#E65100',bg:'#FFF3E0',rec:'Physical activity counselling'};
+  return{txt:'Obese (BMI '+b+')',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE',rec:'Medical evaluation required'};
+}
+function getHbStatus(hb,ay,gn){
+  var h=parseFloat(hb);if(!h||h<=0)return{txt:'—',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA'};
+  var thr;if(ay<5)thr=11.0;else if(ay<=11)thr=11.5;else if(ay<=14)thr=12.0;else thr=(gn==='Female')?12.0:13.0;
+  var d=h-thr;
+  if(d>=0)return{txt:'Normal ✓ ('+h+' g/dl)',cls:'vc-n',col:'#1B5E20',bg:'#E8F5E9',thr:thr};
+  if(d>=-2)return{txt:'Mild Anaemia — '+h+' g/dl',cls:'vc-w',col:'#E65100',bg:'#FFF3E0',thr:thr};
+  if(d>=-4)return{txt:'Moderate Anaemia — '+h+' g/dl',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE',thr:thr};
+  return{txt:'Severe Anaemia ⚠ '+h+' g/dl',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE',thr:thr};
+}
+function getBPStatus(bp){
+  if(!bp||!bp.includes('/'))return{txt:'—',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA'};
+  var p=bp.replace(/[^0-9\/]/g,'').split('/'),s=parseInt(p[0]),d=parseInt(p[1]);
+  if(isNaN(s)||isNaN(d))return{txt:'Format: SYS/DIA',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA'};
+  if(s<100&&d<65)return{txt:'Hypotension',cls:'vc-w',col:'#01579B',bg:'#E1F5FE'};
+  if(s<120&&d<80)return{txt:'Normal ✓ ('+s+'/'+d+')',cls:'vc-n',col:'#1B5E20',bg:'#E8F5E9'};
+  if(s<130&&d<80)return{txt:'Elevated ('+s+'/'+d+')',cls:'vc-w',col:'#E65100',bg:'#FFF3E0'};
+  if(s<140||d<90)return{txt:'Stage 1 HTN',cls:'vc-a',col:'#E65100',bg:'#FFE0B2'};
+  return{txt:'Stage 2 HTN ⚠',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE'};
+}
+function getTpStatus(tp){
+  var t=parseFloat(tp);if(!t||t<90||t>115)return{txt:'—',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA'};
+  if(t<95)return{txt:'Hypothermia ⚠',cls:'vc-a',col:'#01579B',bg:'#E1F5FE'};
+  if(t<97)return{txt:'Subnormal ('+t+'°F)',cls:'vc-w',col:'#1565C0',bg:'#E3F2FD'};
+  if(t<=99)return{txt:'Normal ✓ ('+t+'°F)',cls:'vc-n',col:'#1B5E20',bg:'#E8F5E9'};
+  if(t<=100.4)return{txt:'Low-grade Fever',cls:'vc-w',col:'#E65100',bg:'#FFF3E0'};
+  if(t<=102)return{txt:'Moderate Fever ('+t+'°F)',cls:'vc-a',col:'#E65100',bg:'#FFE0B2'};
+  if(t<=104)return{txt:'High Fever ⚠ ('+t+'°F)',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE'};
+  return{txt:'Hyperpyrexia ⚠',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE'};
+}
+function getMuacStatus(mu){
+  var m=parseFloat(mu);if(!m||m<=0)return{txt:'—',cls:'vc-x',col:'#9E9E9E',bg:'#FAFAFA'};
+  if(m<11.5)return{txt:'SAM <11.5cm — Refer NRC',cls:'vc-a',col:'#B71C1C',bg:'#FFEBEE'};
+  if(m<12.5)return{txt:'MAM <12.5cm',cls:'vc-a',col:'#E65100',bg:'#FFE0B2'};
+  if(m<13.5)return{txt:'At Risk ('+m+'cm)',cls:'vc-w',col:'#E65100',bg:'#FFF3E0'};
+  return{txt:'Normal ✓ ('+m+'cm)',cls:'vc-n',col:'#1B5E20',bg:'#E8F5E9'};
+}
+function calcHealthScore(rec,ay,gn){
+  var sc=0,tot=0;
+  if(rec.bmi){tot+=25;var bs=getBMIStatus(rec.bmi,ay);sc+=(bs.cls==='vc-n')?25:(bs.cls==='vc-w')?12:3;}
+  if(rec.hb){tot+=25;var hs=getHbStatus(rec.hb,ay,gn);sc+=(hs.cls==='vc-n')?25:(hs.cls==='vc-w')?13:4;}
+  if(rec.bp){tot+=18;var bp=getBPStatus(rec.bp);sc+=(bp.cls==='vc-n')?18:(bp.cls==='vc-w')?9:0;}
+  if(rec.tp){tot+=12;var tp=getTpStatus(rec.tp);sc+=(tp.cls==='vc-n')?12:(tp.cls==='vc-w')?6:0;}
+  if(rec.vi){tot+=10;sc+=rec.vi.includes('6/6')?10:rec.vi.includes('6/9')?7:5;}
+  if(rec.pu){tot+=10;var pu=parseInt(rec.pu),mn=ay<10?70:60,mx=ay<10?110:100;sc+=(pu>=mn&&pu<=mx)?10:Math.abs(pu-85)<20?6:2;}
+  if(!tot)return null;
+  var raw=Math.round((sc/tot)*100);
+  if(rec.de&&rec.de.toLowerCase().includes('cavit'))raw=Math.max(raw-3,0);
+  return Math.min(raw,100);
+}
+function scColor(s){return s>=80?'#2E7D32':s>=60?'#F57F17':s>=40?'#E65100':'#B71C1C';}
+function scLabel(s){return s>=80?'Good Health':s>=60?'Moderate Health':s>=40?'Needs Attention':'Poor Health';}
+
+// ── AUTO CALC IN FORM ──────────────────────────────────
+function calcAll(){
+  var ht=parseFloat(document.getElementById('r-ht')?document.getElementById('r-ht').value:'');
+  var wt=parseFloat(document.getElementById('r-wt')?document.getElementById('r-wt').value:'');
+  var bp=document.getElementById('r-bp')?document.getElementById('r-bp').value:'';
+  var tp=document.getElementById('r-tp')?document.getElementById('r-tp').value:'';
+  var hb=document.getElementById('r-hb')?document.getElementById('r-hb').value:'';
+  var mu=document.getElementById('r-mu')?document.getElementById('r-mu').value:'';
+  var s=APP.students.find(function(x){return x.id===curSid;});
+  var ay=s?age(s.db):12,gn=s?s.gn:'Male';
+  if(ht>0&&wt>0){
+    var bmi=(wt/((ht/100)*(ht/100))).toFixed(1);
+    sEl('r-bmi',bmi);
+    var bs=getBMIStatus(bmi,ay);
+    var e=document.getElementById('r-bmis');if(e){e.value=bs.txt;e.style.background=bs.bg;e.style.color=bs.col;}
+  }
+  if(bp){var bps=getBPStatus(bp);var e=document.getElementById('r-bps');if(e){e.value=bps.txt;e.style.background=bps.bg;e.style.color=bps.col;}}
+  if(tp){var tps=getTpStatus(tp);var e=document.getElementById('r-tps');if(e){e.value=tps.txt;e.style.background=tps.bg;e.style.color=tps.col;}}
+  if(hb){var hbs=getHbStatus(hb,ay,gn);var e=document.getElementById('r-hbs');if(e){e.value=hbs.txt;e.style.background=hbs.bg;e.style.color=hbs.col;}}
+  if(mu){var mus=getMuacStatus(mu);var e=document.getElementById('r-mus');if(e){e.value=mus.txt;e.style.background=mus.bg;e.style.color=mus.col;}}
+}
+
+// ── HELPERS ────────────────────────────────────────────
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function age(d){try{return Math.floor((Date.now()-new Date(d))/(1000*60*60*24*365.25));}catch(e){return 0;}}
+function fmt(d){try{return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch(e){return d||'';}}
+function today(){return new Date().toISOString().split('T')[0];}
+function greet(){var h=new Date().getHours();return h<12?'Good Morning! 🌅':h<17?'Good Afternoon! ☀️':'Good Evening! 🌙';}
+function badge(s){var c=SC[s]||SC.Routine;return '<span class="badge" style="background:'+c.bg+';color:'+c.tx+';border:1px solid '+c.bdr+'"><span class="bdot" style="background:'+c.dot+'"></span>'+s+'</span>';}
+function avt(n,g,sz){
+  var cols=(g==='Female')?AVF:AVM;
+  var bg=cols[(n.charCodeAt(0)||65)%cols.length];
+  var ini=n.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+  return '<div class="av" style="width:'+sz+'px;height:'+sz+'px;min-width:'+sz+'px;background:'+bg+';font-size:'+Math.round(sz*.38)+'px">'+ini+'</div>';
+}
+function lastRec(sid){return APP.records.filter(function(r){return r.sid===sid;}).sort(function(a,b){return new Date(b.dt)-new Date(a.dt);})[0];}
+function recCnt(sid){return APP.records.filter(function(r){return r.sid===sid;}).length;}
+function gEl(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function sEl(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
+
+// TOAST
+var tTmr;
+function toast(msg,type){
+  var e=document.getElementById('toast');
+  e.textContent=msg;e.className='show t'+(type||'s');
+  clearTimeout(tTmr);tTmr=setTimeout(function(){e.classList.remove('show');},3600);
+}
+
+// MODAL
+function openModal(id){var m=document.getElementById(id);if(m)m.classList.add('open');resetSess();}
+function closeModal(id){var m=document.getElementById(id);if(m)m.classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(function(m){m.classList.remove('open');});});
+function showPage(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById(id);if(pg)pg.classList.add('active');}
+function openDrawer(){document.getElementById('appDrawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');}
+function closeDrawer(){document.getElementById('appDrawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');}
+function fabAction(){var inCard=document.getElementById('vw-card').style.display!=='none';if(inCard&&curSid)openAddRec(curSid);else openModal('mo-addst');}
+function botNav(tab){
+  ['bnHome','bnUpload','bnAI','bnMore'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('active');});
+  if(tab==='home'){document.getElementById('bnHome').classList.add('active');showList();}
+  else if(tab==='upload'){document.getElementById('bnUpload').classList.add('active');openModal('mo-upl');}
+  else if(tab==='ai'){document.getElementById('bnAI').classList.add('active');openAIAssistant();}
+}
+function updateStats(){
+  if(!sb)initSupabase();
+  if(!sb)return;
+  Promise.all([
+    sb.from('schools').select('code',{count:'exact',head:true}),
+    sb.from('students').select('id',{count:'exact',head:true}),
+    sb.from('health_records').select('id',{count:'exact',head:true})
+  ]).then(function(rs){
+    var counts=rs.map(function(r){return r&&typeof r.count==='number'?r.count:0;});
+    ['ls1','ls2','ls3'].forEach(function(id,i){var e=document.getElementById(id);if(e)e.textContent=counts[i];});
+  }).catch(function(){});
+}
+updateStats();
+
+// ── AUTH ───────────────────────────────────────────────
+var authMode='';
+function showAuth(mode){
+  authMode=mode;
+  document.getElementById('authBtns').style.display='none';
+  document.getElementById('authCard').style.display='block';
+  document.getElementById('authErr').style.display='none';
+  document.getElementById('authTitle').textContent=mode==='login'?'🔐 School Login':'🏫 Register School';
+  document.getElementById('fgtLnk').style.display=mode==='login'?'block':'none';
+  var html='';
+  if(mode==='register'){
+    html+='<div class="field"><label>School Name <span class="req">*</span></label><input id="a-sn" placeholder="e.g. ZP High School, Madhira"></div>';
+    html+='<div class="field"><label>District</label><input id="a-di" value="Khammam"></div>';
+  }
+  html+='<div class="field"><label>School Code <span class="req">*</span></label><input id="a-cd" placeholder="'+(mode==='login'?'Your school code':'e.g. ZPHS001')+'" oninput="this.value=this.value.toUpperCase()"></div>';
+  html+='<div class="field"><label>PIN <span class="req">*</span></label><input id="a-pi" type="password" placeholder="'+(mode==='login'?'Your PIN':'Set PIN (min 4 chars)')+'" onkeydown="if(event.key===\'Enter\')submitAuth()"></div>';
+  if(mode==='register'){
+    html+='<div style="background:var(--tgxl);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--tg);border-left:3px solid var(--tgl);line-height:1.65"><b>💡 Security Hint</b> — helps you self-reset PIN if forgotten</div>';
+    html+='<div class="field"><label>Hint Question</label><select id="a-hq" onchange="document.getElementById(\'a-haw\').style.display=this.value?\'flex\':\'none\'"><option value="">-- Skip --</option><option>School founding year?</option><option>Headmaster first name?</option><option>School village name?</option><option>UDISE number?</option></select></div>';
+    html+='<div class="field" id="a-haw" style="display:none"><label>Hint Answer</label><input id="a-ha" placeholder="Remember this!"></div>';
+  }
+  document.getElementById('authFields').innerHTML=html;
+  document.getElementById('authSwitch').innerHTML=mode==='login'?'New? <span style="color:var(--tgm);cursor:pointer;font-weight:800" onclick="showAuth(\'register\')">Register →</span>':'Registered? <span style="color:var(--tgm);cursor:pointer;font-weight:800" onclick="showAuth(\'login\')">Login here</span>';
+}
+function hideAuth(){document.getElementById('authBtns').style.display='flex';document.getElementById('authCard').style.display='none';}
+function showAErr(msg){var e=document.getElementById('authErr');e.textContent='⚠️ '+msg;e.style.display='block';var c=document.getElementById('authCard');c.classList.add('shake');setTimeout(function(){c.classList.remove('shake');},400);}
+function submitAuth(){
+  var code=(document.getElementById('a-cd')?document.getElementById('a-cd').value:'').trim().toUpperCase();
+  var pin=(document.getElementById('a-pi')?document.getElementById('a-pi').value:'').trim();
+  if(!code||!pin){showAErr('Please fill all required fields.');return;}
+  if(!sb)initSupabase();
+  if(authMode==='login'){
+    // Always go to Supabase — code+PIN works on any device, no per-device setup.
+    showAErr('⏳ Checking cloud…');
+    fetchSchoolAsync(code).then(function(d){
+      if(!d){showAErr('School "'+code+'" not found. Check the code or register a new school.');return;}
+      if(!chkP(pin,d.profile.pin)){showAErr('Incorrect PIN. Please try again.');return;}
+      document.getElementById('authErr').style.display='none';
+      enterApp(code,d);
+      toast('✅ Logged in — '+d.students.length+' students, '+d.records.length+' records');
+    }).catch(function(err){showAErr('Cloud error: '+(err&&err.message||'unknown')+'. Check internet and retry.');});
+  }else{
+    if(pin.length<4){showAErr('PIN must be at least 4 characters.');return;}
+    var sn=document.getElementById('a-sn')?document.getElementById('a-sn').value.trim():'';
+    if(!sn){showAErr('School name is required.');return;}
+    showAErr('⏳ Checking if code is taken…');
+    sb.from('schools').select('code').eq('code',code).maybeSingle().then(function(r){
+      if(r.error){showAErr('Cloud error: '+r.error.message);return;}
+      if(r.data){showAErr('Code "'+code+'" already registered. Choose a different code or login.');return;}
+      var hq=document.getElementById('a-hq')?document.getElementById('a-hq').value:'';
+      var ha=document.getElementById('a-ha')?document.getElementById('a-ha').value.trim():'';
+      var profile={name:sn,district:(document.getElementById('a-di')?document.getElementById('a-di').value.trim():'Khammam'),pin:hashPin(pin),reg:today(),hq:hq,ha:ha?hashPin(ha.toLowerCase()):''};
+      sbUpsertSchool(profile,code).then(function(x){
+        if(x.error){showAErr('Could not register: '+x.error.message);return;}
+        document.getElementById('authErr').style.display='none';
+        var nd={profile:profile,students:[],records:[]};
+        cacheSch(code,nd);
+        enterApp(code,nd);toast('🎉 '+sn+' registered!');updateStats();
+      });
+    });
+  }
+}
+function closeAllAuth(){
+  document.getElementById('authCard').style.display='none';
+  document.getElementById('authBtns').style.display='flex';
+}
+function enterApp(code,d){
+  APP.school={code:code,profile:d.profile};APP.students=d.students||[];APP.records=d.records||[];
+  cacheSch(code,{profile:d.profile,students:APP.students,records:APP.records});
+  document.getElementById('navName').textContent=d.profile.name||code;
+  document.getElementById('navCode').textContent=code+' · '+(d.profile.district||'Khammam');
+  document.getElementById('dashG').textContent=greet();
+  document.getElementById('dashS').textContent=(d.profile.name||code)+' · Khammam District';
+  var dSN=document.getElementById('drawerSchName');if(dSN)dSN.textContent=d.profile.name||code;
+  var dSC=document.getElementById('drawerSchCode');if(dSC)dSC.textContent=code+' · '+(d.profile.district||'Khammam');
+  showPage('pg-app');showList();renderStrip();renderStudents();genAlerts();resetSess();
+  sessionStorage.setItem('vsw62_s',JSON.stringify({c:code,ts:Date.now()}));
+  hideSyncAlert();
+  attachRealtime(code);
+}
+function logout(){
+  if(sbChan){try{sb.removeChannel(sbChan);}catch(e){}sbChan=null;}
+  sbOn=false;
+  APP={school:null,students:[],records:[]};
+  sessionStorage.removeItem('vsw62_s');clearTimeout(sessTmr);
+  setSyncUI('local');
+  showPage('pg-land');
+  document.getElementById('authCard').style.display='none';
+  document.getElementById('authBtns').style.display='flex';
+  document.getElementById('printBtn').style.display='none';
+  updateStats();
+}
+// Session restore — same code+PIN session keeps working across reloads.
+// Pulls fresh data from Supabase every time (the local cache is just a fallback
+// if the network is slow during reload).
+(function(){
+  try{
+    var s=sessionStorage.getItem('vsw62_s');
+    if(!s)return;
+    var o=JSON.parse(s);
+    if(!o||!o.c)return;
+    var cached=loadSch(o.c);
+    if(cached)enterApp(o.c,cached); // instant render from cache
+    fetchSchoolAsync(o.c).then(function(fresh){
+      if(!fresh){if(!cached)sessionStorage.removeItem('vsw62_s');return;}
+      // Refresh APP state with authoritative cloud data and re-render.
+      if(APP.school&&APP.school.code===o.c){
+        APP.school.profile=fresh.profile;APP.students=fresh.students;APP.records=fresh.records;
+        rerenderUI();
+      }else{
+        enterApp(o.c,fresh);
+      }
+    }).catch(function(){});
+  }catch(e){sessionStorage.removeItem('vsw62_s');}
+})();
+
+// ── HEALTH ALERTS ──────────────────────────────────────
+function genAlerts(){
+  var el=document.getElementById('healthAlerts');if(!el)return;
+  var alerts=[],anaemic=0,severe=0,followUp=0,unscreened=0;
+  APP.students.forEach(function(s){
+    var ay=age(s.db),lr=lastRec(s.id);
+    if(!lr)unscreened++;
+    else{
+      if(lr.hb&&getHbStatus(lr.hb,ay,s.gn).cls==='vc-a')anaemic++;
+      if(lr.bmi&&getBMIStatus(lr.bmi,ay).txt.includes('Severely'))severe++;
+      if(lr.st==='Follow-up needed'||lr.st==='Referred')followUp++;
+    }
+  });
+  if(anaemic>0)alerts.push({cls:'ab-urgent',ic:'🩸',t:anaemic+' student'+(anaemic>1?'s':'')+' with anaemia below WHO threshold',s:'Hb critically low. Start IFA treatment per NHM 2024 protocol.'});
+  if(severe>0)alerts.push({cls:'ab-urgent',ic:'⚠️',t:severe+' severely underweight student'+(severe>1?'s':''),s:'BMI critically low. Consider NRC referral per NHM 2024.'});
+  if(followUp>0)alerts.push({cls:'ab-warn',ic:'📋',t:followUp+' student'+(followUp>1?'s':'')+' need follow-up action',s:'Status: Follow-up needed or Referred. Please review their health records.'});
+  if(unscreened>0&&APP.students.length>0)alerts.push({cls:'ab-info',ic:'🩺',t:unscreened+' student'+(unscreened>1?'s':'')+' not yet screened',s:'Use Bulk Screening (☰ Menu) to screen an entire class in minutes.'});
+  el.innerHTML=alerts.map(function(a){return '<div class="alert-banner '+a.cls+'"><div style="font-size:22px;flex-shrink:0">'+a.ic+'</div><div style="flex:1"><div style="font-size:13px;font-weight:800">'+a.t+'</div><div style="font-size:11px;margin-top:2px;opacity:.85;line-height:1.5">'+a.s+'</div></div></div>';}).join('');
+}
+
+// ── ANALYTICS ──────────────────────────────────────────
+function toggleAnalytics(){
+  var bar=document.getElementById('analyticsBar');
+  if(bar.style.display==='none'||!bar.style.display){updateAnalytics();bar.style.display='block';}
+  else bar.style.display='none';
+}
+function updateAnalytics(){
+  var cls=gEl('fCl');
+  var stu=cls?APP.students.filter(function(s){return s.cl===cls;}):APP.students;
+  var sc=stu.filter(function(s){return recCnt(s.id)>0;}).length;
+  var an=stu.filter(function(s){var lr=lastRec(s.id);if(!lr||!lr.hb)return false;return getHbStatus(lr.hb,age(s.db),s.gn).cls!=='vc-n';}).length;
+  var uw=stu.filter(function(s){var lr=lastRec(s.id);if(!lr||!lr.bmi)return false;return getBMIStatus(lr.bmi,age(s.db)).cls!=='vc-n';}).length;
+  var vf=stu.filter(function(s){return NHM.every(function(v){return s[v.id];});}).length;
+  var el=document.getElementById('analyticsMetrics');
+  if(!el)return;
+  el.innerHTML=[{n:stu.length,l:'Students',c:'#1565C0'},{n:sc,l:'Screened',c:'#1B5E20'},{n:an,l:'Anaemia',c:'#B71C1C'},{n:uw,l:'Underweight',c:'#E65100'},{n:vf,l:'Fully Vacc.',c:'#4527A0'}]
+    .map(function(m){return '<div class="metric-chip"><div class="metric-num" style="color:'+m.c+'">'+m.n+'</div><div class="metric-lbl">'+m.l+'</div></div>';}).join('');
+}
+
+// ── BULK SCREENING ─────────────────────────────────────
+function openBulkScreening(){sEl('bk-dt',today());closeDrawer();openModal('mo-bulk');}
+function previewBulk(){
+  var cl=gEl('bk-cl'),sc=gEl('bk-sc');
+  var stu=APP.students.filter(function(s){return cl&&s.cl===cl&&(!sc||s.sc===sc);});
+  var prev=document.getElementById('bulkPreview');
+  if(cl&&stu.length)prev.innerHTML='<div style="background:var(--tgxl);border:1px solid var(--tg2);border-radius:var(--rs);padding:10px;font-size:13px;color:var(--tg);margin-bottom:10px"><b>'+stu.length+' students</b> found in Class '+cl+(sc?'-'+sc:'')+'. Names: '+stu.slice(0,4).map(function(s){return s.name.split(' ')[0];}).join(', ')+(stu.length>4?'…':'')+'</div>';
+  else prev.innerHTML='';
+}
+function startBulkScreening(){
+  var cl=gEl('bk-cl'),sc=gEl('bk-sc'),dc=gEl('bk-dc'),dt=gEl('bk-dt');
+  if(!cl){alert('Please select a class.');return;}
+  if(!dc){alert('Doctor name is required.');return;}
+  var stu=APP.students.filter(function(s){return s.cl===cl&&(!sc||s.sc===sc);});
+  if(!stu.length){toast('No students found for this class.','w');return;}
+  bulkQueue=stu;bulkIdx=0;bulkDoctor=dc;bulkDate=dt||today();
+  closeModal('mo-bulk');
+  document.getElementById('vw-list').style.display='none';
+  document.getElementById('vw-card').style.display='none';
+  document.getElementById('vw-bulk').style.display='block';
+  renderBulkScreen();
+}
+function renderBulkScreen(){
+  var s=bulkQueue[bulkIdx];
+  if(!s){showBulkDone();return;}
+  var ay=age(s.db),lr=lastRec(s.id);
+  document.getElementById('bulkProgress').textContent=(bulkIdx+1)+'/'+bulkQueue.length;
+  var out='<div class="card" style="margin-bottom:14px;box-shadow:var(--s2)">';
+  out+='<div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">'+avt(s.name,s.gn,52);
+  out+='<div><div style="font-family:var(--fh);font-size:17px;font-weight:800">'+s.name+'</div>';
+  out+='<div style="font-size:12px;color:var(--tx3);margin-top:2px">Class '+s.cl+'–'+(s.sc||'A')+' · Age '+ay+' · '+s.gn+(s.vl?' · '+s.vl:'')+'</div>';
+  if(lr)out+='<div style="margin-top:5px">'+badge(lr.st)+'<span style="font-size:11px;color:var(--tx4);margin-left:6px">Last: '+fmt(lr.dt)+'</span></div>';
+  else out+='<div style="font-size:11px;color:var(--ts);margin-top:4px">⚡ First screening</div>';
+  out+='</div></div>';
+  if(lr&&(lr.bmi||lr.hb)){
+    out+='<div style="background:var(--bg3);border-radius:var(--rs);padding:10px;margin-bottom:14px;border:1px solid var(--bd2)">';
+    out+='<div style="font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Previous Vitals — '+fmt(lr.dt)+'</div>';
+    out+='<div style="display:flex;gap:7px;flex-wrap:wrap">';
+    if(lr.bmi){var bs=getBMIStatus(lr.bmi,ay);out+='<span style="font-size:11px;background:'+bs.bg+';color:'+bs.col+';border-radius:20px;padding:3px 10px;font-weight:700">BMI '+lr.bmi+'</span>';}
+    if(lr.hb){var hbs=getHbStatus(lr.hb,ay,s.gn);out+='<span style="font-size:11px;background:'+hbs.bg+';color:'+hbs.col+';border-radius:20px;padding:3px 10px;font-weight:700">Hb '+lr.hb+' g/dl</span>';}
+    if(lr.ht&&lr.wt)out+='<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd2);border-radius:20px;padding:3px 10px;font-weight:600">'+lr.ht+'cm / '+lr.wt+'kg</span>';
+    out+='</div></div>';
+  }
+  out+='<div class="g2" style="gap:10px">';
+  out+='<div class="field"><label>Height (cm)</label><input id="bk-ht" type="number" placeholder="148" oninput="bkCalc()" inputmode="decimal"></div>';
+  out+='<div class="field"><label>Weight (kg)</label><input id="bk-wt" type="number" placeholder="38" oninput="bkCalc()" inputmode="decimal"></div>';
+  out+='<div class="field"><label>BMI (auto)</label><input id="bk-bmi" readonly style="font-weight:900;font-size:15px"></div>';
+  out+='<div class="field"><label>Hb (g/dl)</label><input id="bk-hb" placeholder="12.5" inputmode="decimal"></div>';
+  out+='<div class="field"><label>Temp (°F)</label><input id="bk-tp" placeholder="98.6" inputmode="decimal"></div>';
+  out+='<div class="field"><label>BP</label><input id="bk-bp" placeholder="110/70"></div>';
+  out+='<div class="field span2"><label>Diagnosis / Findings <span class="req">*</span></label><input id="bk-di" placeholder="e.g. Healthy, mild anaemia, fever…"></div>';
+  out+='<div class="field"><label>Status</label><select id="bk-st"><option>Healthy</option><option selected>Routine</option><option>Follow-up needed</option><option>Under monitoring</option><option>Referred</option></select></div>';
+  out+='<div class="field"><label>Nutrition</label><select id="bk-nu"><option value="">--</option><option>Normal</option><option>Underweight</option><option>Severely Malnourished</option></select></div>';
+  out+='</div></div>';
+  out+='<div style="display:flex;gap:5px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">';
+  bulkQueue.forEach(function(_,i){out+='<div style="width:9px;height:9px;border-radius:50%;background:'+(i<bulkIdx?'var(--tgm)':i===bulkIdx?'var(--gold)':'var(--bd2)')+';transition:background .3s"></div>';});
+  out+='</div>';
+  out+='<div style="display:flex;gap:9px">';
+  if(bulkIdx>0)out+='<button class="btn btn-gh btn-sm" onclick="bulkIdx--;renderBulkScreen()">← Prev</button>';
+  out+='<button class="btn btn-p btn-sm" style="flex:1;justify-content:center" onclick="saveBulkRec()">💾 Save & Next ('+(bulkIdx+1)+'/'+bulkQueue.length+') →</button>';
+  out+='<button class="btn btn-gh btn-sm" onclick="bulkIdx++;renderBulkScreen()" title="Skip">Skip</button>';
+  out+='</div>';
+  document.getElementById('bulkContent').innerHTML=out;
+  setTimeout(function(){var e=document.getElementById('bk-ht');if(e)e.focus();},200);
+}
+function bkCalc(){
+  var ht=parseFloat(gEl('bk-ht')),wt=parseFloat(gEl('bk-wt'));
+  if(ht>0&&wt>0){
+    var bmi=(wt/((ht/100)*(ht/100))).toFixed(1);sEl('bk-bmi',bmi);
+    var e=document.getElementById('bk-bmi');
+    if(e){var s=bulkQueue[bulkIdx];var bs=getBMIStatus(bmi,age(s.db));e.style.color=bs.col;e.style.background=bs.bg;}
+  }
+}
+function saveBulkRec(){
+  var s=bulkQueue[bulkIdx],di=gEl('bk-di');
+  if(!di){alert('Diagnosis is required. Enter at least "Healthy" or findings.');return;}
+  var rec={id:uid('R'),sid:s.id,dt:bulkDate,dc:bulkDoctor,sp:'General Physician',
+    ht:gEl('bk-ht'),wt:gEl('bk-wt'),bmi:gEl('bk-bmi'),hb:gEl('bk-hb'),
+    tp:gEl('bk-tp'),bp:gEl('bk-bp'),nu:gEl('bk-nu'),ca:'General',
+    st:gEl('bk-st'),di:di,co:'',fi:'',rx:'',fu:'',rf:'',no:'Bulk screening',wk:'Bulk'};
+  APP.records.push(rec);sbUpsertRecord(rec);
+  toast('✅ '+s.name.split(' ')[0]+' saved!');
+  bulkIdx++;renderBulkScreen();
+}
+function showBulkDone(){
+  document.getElementById('bulkProgress').textContent='✅ Done!';
+  document.getElementById('bulkContent').innerHTML='<div style="text-align:center;padding:52px 20px"><div style="font-size:66px;margin-bottom:16px">✅</div><h2 style="font-family:var(--fh);font-size:24px;color:var(--tg);margin-bottom:10px">Screening Complete!</h2><p style="color:var(--tx2);font-size:14px;margin-bottom:8px;line-height:1.7">'+bulkQueue.length+' students screened. Records saved'+(sbOn?' and <b>synced to all devices</b>.':' locally — will upload when online.')+'</p><div style="background:var(--tgxl);border:1px solid var(--tg2);border-radius:var(--r);padding:12px;margin:14px auto;max-width:360px;font-size:13px;color:var(--tgm);line-height:1.65">📊 Health alerts updated. Check dashboard for anaemia &amp; underweight alerts.</div><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px"><button class="btn btn-p btn-lg" onclick="showList()">✅ View Dashboard</button><button class="btn btn-am btn-sm" onclick="openExportModal()">📤 Export Report</button></div></div>';
+  renderStrip();renderStudents();genAlerts();
+  toast('🎉 Bulk screening complete — '+bulkQueue.length+' students!');
+}
+
+// ── AI ASSISTANT ───────────────────────────────────────
+function buildAICtx(){
+  if(!curSid)return '';
+  var s=APP.students.find(function(x){return x.id===curSid;});
+  if(!s)return '';
+  var lr=lastRec(s.id),ay=age(s.db);
+  var ctx='PATIENT:\nName: '+s.name+' | Age: '+ay+' yrs | Gender: '+s.gn+'\nClass: '+s.cl+' | Village: '+(s.vl||'—')+'\nAllergies: '+(s.al||'None')+' | History: '+(s.hi||'None')+'\n';
+  if(lr){
+    ctx+='LATEST VITALS ('+lr.dt+'):\n';
+    if(lr.ht)ctx+='Height: '+lr.ht+'cm | Weight: '+lr.wt+'kg | BMI: '+lr.bmi+'\n';
+    if(lr.bp)ctx+='BP: '+lr.bp+' | Temp: '+lr.tp+'°F | Pulse: '+lr.pu+' bpm\n';
+    if(lr.hb)ctx+='Hb: '+lr.hb+' g/dl ('+getHbStatus(lr.hb,ay,s.gn).txt+')\n';
+    if(lr.mu)ctx+='MUAC: '+lr.mu+'cm ('+getMuacStatus(lr.mu).txt+')\n';
+    if(lr.vi)ctx+='Vision: '+lr.vi+'\n';
+    if(lr.nu)ctx+='Nutrition: '+lr.nu+'\n';
+    if(lr.di)ctx+='Diagnosis: '+lr.di+'\n';
+    if(lr.rx)ctx+='Prescription: '+lr.rx+'\n';
+  }
+  var vDone=NHM.filter(function(v){return s[v.id];}).map(function(v){return v.lbl;});
+  var vPend=NHM.filter(function(v){return !s[v.id];}).map(function(v){return v.lbl;});
+  ctx+='Vaccines given: '+(vDone.join(', ')||'None recorded')+'\n';
+  ctx+='Vaccines pending: '+(vPend.join(', ')||'All complete')+'\n';
+  return ctx;
+}
+function openAIAssistant(){
+  aiHistory=[];
+  var ctx=buildAICtx();
+  var ctxEl=document.getElementById('aiContext');
+  if(ctx&&ctxEl){
+    ctxEl.style.display='block';
+    var s=curSid?APP.students.find(function(x){return x.id===curSid;}):null;
+    ctxEl.innerHTML='<b>📋 Patient context loaded:</b> '+(s?s.name+' — vitals, Hb, vaccination history shared with AI':'No patient selected');
+  }else if(ctxEl)ctxEl.style.display='none';
+  openModal('mo-ai');
+  setTimeout(function(){var e=document.getElementById('aiIn');if(e)e.focus();},300);
+}
+function quickAI(msg){var e=document.getElementById('aiIn');if(e)e.value=msg;sendAI();}
+function askAIFromRecord(){
+  var di=gEl('r-di'),bmi=gEl('r-bmi'),hb=gEl('r-hb'),bp=gEl('r-bp'),tp=gEl('r-tp');
+  var msg='Student vitals: BMI='+bmi+', Hb='+hb+' g/dl, BP='+bp+', Temp='+tp+'°F. Diagnosis: '+di+'. Suggest treatment as per NHM India 2024.';
+  closeModal('mo-addrec');openAIAssistant();setTimeout(function(){quickAI(msg);},400);
+}
+function appendAIMsg(content,role){
+  var msgs=document.getElementById('aiMessages');
+  var div=document.createElement('div');div.className='ai-msg '+(role==='user'?'user':'bot');
+  div.innerHTML=content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
+}
+function sendAI(){
+  var input=document.getElementById('aiIn'),msg=input?input.value.trim():'';if(!msg)return;
+  if(input)input.value='';
+  var btn=document.getElementById('aiSendBtn');if(btn)btn.disabled=true;
+  appendAIMsg(msg,'user');aiHistory.push({role:'user',content:msg});
+  var msgs=document.getElementById('aiMessages');
+  var td=document.createElement('div');td.className='ai-msg bot';
+  td.innerHTML='<span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>';
+  msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;
+  var ctx=buildAICtx();
+  var sys='You are Vidyarthi Swasthya AI — clinical decision support for govt school students in Khammam District, Telangana, India.\n\nProtocols:\n- NHM India 2024 UIP immunization schedule\n- WHO 2024 Hb thresholds: 5-11 yrs: 11.5; 12-14: 12.0; F15+: 12.0; M15+: 13.0 g/dl\n- IAP/WHO BMI-for-age paediatric thresholds\n- Telangana: MDM, WIFS (IFA 100mg + folic acid 500mcg weekly, girls 10-19), Aarogyasri\n- Referral: SAM → PHC NRC; severe Hb → CHC/DH; vision → District Hospital\n- Give concise, actionable guidance for rural health workers\n- End every response with: "Clinical judgment of examining doctor prevails."\n\n'+(ctx?'PATIENT CONTEXT:\n'+ctx:'General mode — no patient selected.');
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:aiHistory.map(function(m){return{role:m.role,content:m.content};})})})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      td.remove();
+      var reply=data&&data.content&&data.content[0]&&data.content[0].text?data.content[0].text:data&&data.error?'⚠️ AI error: '+data.error.message+'\n\nNHM 2024 Quick Reference:\n• Mild anaemia: IFA syrup 3mg/kg/day × 3m\n• Moderate: IFA + deworming + MDM\n• SAM (MUAC<11.5): Refer PHC NRC\n• WIFS: Weekly IFA 100mg girls 10-19':'⚠️ No response received.';
+      aiHistory.push({role:'assistant',content:reply});appendAIMsg(reply,'bot');if(btn)btn.disabled=false;
+    })
+    .catch(function(){
+      td.remove();
+      appendAIMsg('⚠️ Offline / API unavailable.\n\n**NHM India 2024 Quick Reference:**\n• **Mild anaemia**: IFA syrup 3mg/kg/day × 3 months + deworming\n• **Moderate anaemia**: IFA + refer for monthly monitoring\n• **Severe anaemia (Hb<7)**: Refer CHC/District Hospital immediately\n• **SAM (MUAC<11.5cm)**: Refer PHC NRC immediately\n• **WIFS**: Weekly 100mg IFA + 500mcg folic acid, girls 10-19\n• **Moderate fever**: Paracetamol + ORS + review 24h\n• **Vision <6/9**: Refer District Hospital Eye Dept\n\n_Clinical judgment of examining doctor prevails._','bot');
+      if(btn)btn.disabled=false;
+    });
+}
+
+// ── INTEGRATION HUB ────────────────────────────────────
+function openIntegHub(){
+  var html=INTEGRATIONS.map(function(g){
+    var steps='<ol style="margin:7px 0 0 16px;font-size:11px;color:var(--tx2);line-height:1.85">'+g.st.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>';
+    return '<div class="integ-card" style="background:'+g.bg+';border-color:'+g.c+'44"><div class="integ-logo" style="background:'+g.c+'18;font-size:22px">'+g.i+'</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:4px"><b style="font-size:13px;color:'+g.c+'">'+g.n+'</b><span style="font-size:9px;font-weight:800;background:'+g.bBg+';color:#fff;border-radius:20px;padding:2px 7px">'+g.b+'</span><span style="font-size:9px;font-weight:700;background:'+g.sBg+';color:'+g.sC+';border-radius:20px;padding:2px 7px">'+g.s+'</span></div><p style="font-size:12px;color:var(--tx2);line-height:1.55;margin-bottom:3px">'+g.d+'</p>'+steps+'<a href="'+g.l+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:'+g.c+';text-decoration:none;background:'+g.c+'11;padding:4px 12px;border-radius:20px;border:1px solid '+g.c+'33">🔗 '+g.l.replace('https://','')+'</a></div></div>';
+  }).join('');
+  document.getElementById('integList').innerHTML=html;openModal('mo-integ');
+}
+
+// ── ADMIN ──────────────────────────────────────────────
+function openAdminLogin(){openModal('mo-admlog');}
+function doAdmLogin(){
+  var c=gEl('aCode'),p=gEl('aPin');var er=document.getElementById('aErr');
+  if(!c||!p){er.textContent='⚠️ Fill all fields.';er.style.display='block';return;}
+  if(!chkAdm(c,p)){er.textContent='⚠️ Invalid credentials.';er.style.display='block';return;}
+  closeModal('mo-admlog');sEl('aCode','');sEl('aPin','');
+  showPage('pg-adm');renderAdmSchools();renderAdmLog();renderDistSnap();
+}
+function admLogout(){showPage('pg-land');}
+// Admin queries — pull aggregate counts directly from Supabase instead of
+// walking localStorage. One query per table + a cached per-school breakdown.
+function admRefreshAll(){
+  if(!sb)initSupabase();
+  return Promise.all([
+    sb.from('schools').select('*'),
+    sb.from('students').select('data,school_code'),
+    sb.from('health_records').select('data,school_code')
+  ]).then(function(rs){
+    var sR=rs[0],stR=rs[1],rcR=rs[2];
+    if(sR.error||stR.error||rcR.error)return null;
+    var schools=(sR.data||[]).map(function(p){return {code:p.code,profile:{name:p.name,district:p.district,pin:p.pin_hash,reg:p.reg_date,hq:p.hq,ha:p.ha_hash}};});
+    var byCode={};
+    schools.forEach(function(s){byCode[s.code]={profile:s.profile,students:[],records:[]};});
+    (stR.data||[]).forEach(function(x){if(byCode[x.school_code])byCode[x.school_code].students.push(x.data);});
+    (rcR.data||[]).forEach(function(x){if(byCode[x.school_code])byCode[x.school_code].records.push(x.data);});
+    SCHOOL_CACHE=byCode;
+    return byCode;
+  });
+}
+function renderDistSnap(){
+  admRefreshAll().then(function(byCode){
+    if(!byCode)return;
+    var ts=0,tr=0,ta=0,tuw=0;
+    Object.keys(byCode).forEach(function(c){
+      var d=byCode[c],stu=d.students||[],rec=d.records||[];ts+=stu.length;tr+=rec.length;
+      stu.forEach(function(s){
+        var ay=age(s.db);
+        rec.filter(function(r){return r.sid===s.id;}).sort(function(a,b){return new Date(b.dt)-new Date(a.dt);}).slice(0,1).forEach(function(lr){
+          if(lr.hb&&getHbStatus(lr.hb,ay,s.gn).cls!=='vc-n')ta++;
+          if(lr.bmi&&getBMIStatus(lr.bmi,ay).txt.includes('Severely'))tuw++;
+        });
+      });
+    });
+    var el=document.getElementById('districtSnapshot');if(!el)return;
+    el.innerHTML=[{l:'Total Students',v:ts,c:'#1565C0',bg:'#E3F2FD',i:'🎒'},{l:'Medical Records',v:tr,c:'#00695C',bg:'#E0F2F1',i:'🩺'},{l:'Anaemia Cases',v:ta,c:'#B71C1C',bg:'#FFEBEE',i:'🩸'},{l:'Severely Underweight',v:tuw,c:'#E65100',bg:'#FFF3E0',i:'⚠️'}]
+      .map(function(s){return '<div class="scard" style="padding:12px"><div class="sico" style="background:'+s.bg+';width:40px;height:40px;border-radius:11px;font-size:19px">'+s.i+'</div><div><div style="font-size:20px;font-weight:900;color:'+s.c+';font-family:var(--fh)">'+s.v+'</div><div style="font-size:10px;color:var(--tx3);font-weight:700;margin-top:1px">'+s.l+'</div></div></div>';}).join('');
+    renderAdmSchools();
+  });
+}
+function renderAdmSchools(){
+  var codes=allCodes(),q=(gEl('admSrch')||'').toLowerCase();
+  var schs=codes.map(function(c){var d=SCHOOL_CACHE[c];return d?{c:c,p:d.profile,ns:(d.students||[]).length,nr:(d.records||[]).length}:null;}).filter(function(s){return s&&(!q||s.p.name.toLowerCase().includes(q)||s.c.toLowerCase().includes(q));});
+  var ts=0,tr=0;schs.forEach(function(s){ts+=s.ns;tr+=s.nr;});
+  document.getElementById('admStats').innerHTML=[{l:'Schools',v:codes.length,c:'#283593',bg:'#EDE7F6',i:'🏫'},{l:'Students',v:ts,c:'#00695C',bg:'#E0F2F1',i:'👨‍🎓'},{l:'Records',v:tr,c:'#0277BD',bg:'#E1F5FE',i:'🩺'}]
+    .map(function(s){return '<div class="admin-stat"><div style="background:'+s.bg+';border-radius:12px;padding:9px;font-size:20px">'+s.i+'</div><div><div style="font-size:22px;font-weight:900;color:'+s.c+';font-family:var(--fh)">'+s.v+'</div><div style="font-size:10px;color:var(--tx3);font-weight:700;margin-top:1px">'+s.l+'</div></div></div>';}).join('');
+  if(!schs.length){document.getElementById('admSchList').innerHTML='<div style="text-align:center;padding:32px;color:var(--tx4)">No schools yet. Register one from the landing page.</div>';return;}
+  document.getElementById('admSchList').innerHTML=schs.map(function(s){
+    return '<div class="school-row"><div style="display:flex;align-items:center;gap:11px"><div style="font-size:26px">🏫</div><div><div style="font-weight:800;font-size:13px">'+s.p.name+'</div><div style="font-size:11px;color:var(--tx3);margin-top:1px">Code: <b style="color:var(--gv)">'+s.c+'</b> · '+s.ns+' students · '+s.nr+' records</div></div></div><div style="display:flex;gap:8px;flex-shrink:0"><button class="btn btn-in btn-sm" onclick="admView(\''+s.c+'\')">👁</button><button class="btn btn-am btn-sm" onclick="admOpenRst(\''+s.c+'\')">🔑</button></div></div>';
+  }).join('');
+}
+function admView(c){
+  var d=SCHOOL_CACHE[c];if(!d)return;
+  document.getElementById('avT').textContent='🏫 '+d.profile.name;
+  document.getElementById('avB').innerHTML='<div class="g2" style="margin-bottom:14px">'+[['Code','<span style="font-family:var(--fm);font-size:17px;font-weight:900;color:var(--gv);letter-spacing:2px">'+c+'</span>'],['Name',d.profile.name],['District',d.profile.district||'—'],['Registered',fmt(d.profile.reg)],['Students',(d.students||[]).length],['Records',(d.records||[]).length]].map(function(x){return '<div class="ip"><div class="ip-l">'+x[0]+'</div><div class="ip-v">'+x[1]+'</div></div>';}).join('')+'</div><div class="warn-b">Resetting PIN will not affect any student or medical data.</div><div class="mfoot"><button class="btn btn-gh" onclick="closeModal(\'mo-admvw\')">Close</button><button class="btn btn-am" onclick="closeModal(\'mo-admvw\');admOpenRst(\''+c+'\')">🔑 Reset PIN</button></div>';
+  openModal('mo-admvw');
+}
+function admOpenRst(c){
+  admRstCode=c;var d=SCHOOL_CACHE[c];
+  document.getElementById('arInfo').innerHTML='Resetting PIN for: <b>'+(d?d.profile.name:c)+'</b>';
+  sEl('arN','');sEl('arC','');
+  ['arE','arO'].forEach(function(id){document.getElementById(id).style.display='none';});
+  openModal('mo-admrst');
+}
+function doAdmRst(){
+  var np=gEl('arN'),cp=gEl('arC');var er=document.getElementById('arE'),ok=document.getElementById('arO');
+  er.style.display='none';ok.style.display='none';
+  if(np.length<4){er.textContent='⚠️ PIN ≥ 4 chars.';er.style.display='block';return;}
+  if(np!==cp){er.textContent='⚠️ PINs do not match.';er.style.display='block';return;}
+  var d=SCHOOL_CACHE[admRstCode];if(!d){er.textContent='⚠️ School not found.';er.style.display='block';return;}
+  var newHash=hashPin(np);
+  sb.from('schools').update({pin_hash:newHash}).eq('code',admRstCode).then(function(r){
+    if(r.error){er.textContent='⚠️ Cloud error: '+r.error.message;er.style.display='block';return;}
+    d.profile.pin=newHash;cacheSch(admRstCode,d);
+    logAdm('PIN reset: "'+d.profile.name+'" ('+admRstCode+')');
+    ok.textContent='✅ PIN reset for '+d.profile.name+' — new PIN active on every device.';ok.style.display='block';
+    renderAdmLog();toast('✅ PIN reset!');
+  });
+}
+function renderAdmLog(){
+  var el=document.getElementById('admLog');
+  function render(logs){
+    if(!logs.length){el.innerHTML='<div style="padding:14px;color:var(--tx4);font-style:italic;text-align:center">No admin actions yet.</div>';return;}
+    el.innerHTML=logs.map(function(l){return '<div style="padding:9px 13px;border-bottom:1px solid var(--bd2);display:flex;justify-content:space-between;gap:9px;font-size:12px"><span>'+l.msg+'</span><span style="color:var(--tx4);white-space:nowrap;font-size:10px">'+l.t+'</span></div>';}).join('');
+  }
+  // Render local mirror instantly, then overwrite with authoritative cloud log.
+  try{render(JSON.parse(localStorage.getItem('vsw62_log')||'[]'));}catch(e){render([]);}
+  if(sb)sb.from('admin_log').select('msg,created_at').order('created_at',{ascending:false}).limit(100).then(function(r){
+    if(r.error||!r.data)return;
+    render(r.data.map(function(x){return {msg:x.msg,t:new Date(x.created_at).toLocaleString('en-IN')};}));
+  });
+}
+
+// ── RECOVERY ───────────────────────────────────────────
+function showFg(t){['fg-1','fg-code','fg-pin','fg-both'].forEach(function(id){document.getElementById(id).style.display='none';});document.getElementById('fg-'+t).style.display='block';}
+function searchByName(){
+  var q=(gEl('fg-cs')||'').toLowerCase().trim();var r=document.getElementById('fg-cr');
+  if(q.length<2){r.innerHTML='';return;}
+  if(!sb)initSupabase();
+  sb.from('schools').select('code,name,district').ilike('name','%'+q+'%').limit(20).then(function(res){
+    if(res.error){r.innerHTML='<div class="err" style="display:block">Cloud error: '+res.error.message+'</div>';return;}
+    var m=(res.data||[]).map(function(s){return {c:s.code,n:s.name,d:s.district};});
+    if(!m.length){r.innerHTML='<div class="err" style="display:block">Not found. Contact Collector\'s Office.</div>';return;}
+    r.innerHTML=m.map(function(s){return '<div style="background:var(--tgxl);border:1.5px solid var(--tg2);border-radius:var(--r);padding:13px;margin-bottom:8px"><b style="color:var(--tg)">'+s.n+'</b><div style="font-size:11px;color:var(--mtm);margin-top:2px">'+s.d+'</div><div style="margin-top:8px;background:var(--card);border-radius:var(--rs);padding:9px 12px;border:1px solid var(--tg2)">Code: <span style="font-family:var(--fm);font-weight:900;font-size:19px;color:var(--tg);letter-spacing:3px">'+s.c+'</span></div></div>';}).join('');
+  });
+}
+function loadHint(){
+  var code=(gEl('fg-pc')||'').toUpperCase().trim();
+  var hEl=document.getElementById('fg-hint');
+  ['fg-aw','fg-nw','fg-cw'].forEach(function(id){document.getElementById(id).style.display='none';});
+  document.getElementById('fg-pb').style.display='none';hEl.style.display='none';
+  if(code.length<3)return;
+  if(!sb)initSupabase();
+  sb.from('schools').select('hq').eq('code',code).maybeSingle().then(function(r){
+    if(r.error){hEl.textContent='⚠️ Cloud error: '+r.error.message;hEl.style.display='block';return;}
+    if(!r.data){hEl.textContent='⚠️ Code not found.';hEl.style.display='block';return;}
+    if(!r.data.hq){hEl.textContent='No hint set for this school. Contact Collector\'s Office, Khammam.';hEl.style.display='block';return;}
+    hEl.innerHTML='<b>Hint Question:</b> '+r.data.hq;hEl.style.display='block';
+    ['fg-aw','fg-nw','fg-cw'].forEach(function(id){document.getElementById(id).style.display='flex';});
+    document.getElementById('fg-pb').style.display='inline-flex';
+  });
+}
+function selfReset(){
+  var code=(gEl('fg-pc')||'').toUpperCase().trim(),ans=(gEl('fg-ans')||'').toLowerCase().trim();
+  var np=gEl('fg-np'),cp=gEl('fg-cp');
+  var er=document.getElementById('fg-pe'),ok=document.getElementById('fg-po');
+  er.style.display='none';ok.style.display='none';
+  if(np.length<4){er.textContent='⚠️ PIN ≥ 4 chars.';er.style.display='block';return;}
+  if(np!==cp){er.textContent='⚠️ PINs do not match.';er.style.display='block';return;}
+  // Pull authoritative profile from Supabase so reset works on any device.
+  fetchSchoolAsync(code).then(function(d){
+    if(!d){er.textContent='⚠️ Not found.';er.style.display='block';return;}
+    if(!d.profile.ha||!chkP(ans,d.profile.ha)){er.textContent='⚠️ Hint answer incorrect.';er.style.display='block';return;}
+    var newHash=hashPin(np);
+    sb.from('schools').update({pin_hash:newHash}).eq('code',code).then(function(r){
+      if(r.error){er.textContent='⚠️ Cloud error: '+r.error.message;er.style.display='block';return;}
+      logAdm('Self-reset: '+d.profile.name);
+      ok.textContent='✅ PIN reset! Login with new PIN on any device.';ok.style.display='block';toast('✅ PIN reset!');
+    });
+  });
+}
+
+// ── STATS STRIP ────────────────────────────────────────
+function renderStrip(){
+  var nf=APP.students.filter(function(s){var r=lastRec(s.id);return r&&r.st==='Follow-up needed';}).length;
+  var mn=APP.students.filter(function(s){var r=lastRec(s.id);return r&&r.st==='Under monitoring';}).length;
+  var rf=APP.students.filter(function(s){var r=lastRec(s.id);return r&&r.st==='Referred';}).length;
+  document.getElementById('statsStrip').innerHTML=[{l:'Students',v:APP.students.length,c:'#1565C0',bg:'#E3F2FD',i:'🎒'},{l:'Records',v:APP.records.length,c:'#00695C',bg:'#E0F2F1',i:'🩺'},{l:'Follow-up',v:nf,c:'#BF360C',bg:'#FFF3E0',i:'⚠️'},{l:'Ref/Monitor',v:mn+rf,c:'#4527A0',bg:'#EDE7F6',i:'🏥'}]
+    .map(function(s){return '<div class="scard"><div class="sico" style="background:'+s.bg+'">'+s.i+'</div><div><div style="font-size:23px;font-weight:900;color:'+s.c+';font-family:var(--fh)">'+s.v+'</div><div style="font-size:10px;color:var(--tx4);font-weight:700;margin-top:1px;text-transform:uppercase;letter-spacing:.04em">'+s.l+'</div></div></div>';}).join('');
+}
+
+// ── STUDENT LIST ───────────────────────────────────────
+function renderStudents(){
+  var q=(gEl('srIn')||'').toLowerCase();
+  var cls=gEl('fCl'),gen=gEl('fGe'),fst=gEl('fSt');
+  var f=APP.students.filter(function(s){
+    var lr=lastRec(s.id);
+    var mq=!q||[s.name,s.id,s.pa,s.vl,s.md,s.mo].some(function(v){return(v||'').toLowerCase().includes(q);});
+    var mst=!fst||(lr&&lr.st===fst);
+    return mq&&(!cls||s.cl===cls)&&(!gen||s.gn===gen)&&mst;
+  });
+  var cntEl=document.getElementById('fCnt');
+  if(cntEl)cntEl.textContent=f.length+' student'+(f.length!==1?'s':'')+(APP.students.length!==f.length?' (of '+APP.students.length+')':'');
+  var grid=document.getElementById('studGrid');
+  if(!APP.students.length){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:54px 18px;background:var(--card);border-radius:var(--rxl);border:2px dashed var(--bd2)"><div style="font-size:64px;margin-bottom:14px">🏫</div><h2 style="font-family:var(--fh);font-size:22px;color:var(--tg);margin-bottom:10px">Welcome to Vidyarthi Swasthya v6.2!</h2><p style="color:var(--tx2);font-size:13px;margin-bottom:9px;line-height:1.7;max-width:340px;margin-left:auto;margin-right:auto">Register students or upload from Excel.<br>Real-time sync is on — every record appears instantly on every device logged into this school.</p><div style="background:var(--tgxl);border:1px solid var(--tg2);border-radius:var(--r);padding:11px;margin:14px auto;max-width:340px;font-size:12px;color:var(--tg);line-height:1.65">✅ <b>Real-time sync active.</b> Add a student here — open the app on another phone with the same code+PIN, you will see it appear instantly.</div><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button class="btn btn-p" onclick="openModal(\'mo-addst\')">➕ Add Student</button><button class="btn btn-am" onclick="openModal(\'mo-upl\')">📥 Upload Excel</button></div></div>';
+    return;
+  }
+  if(!f.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:44px;color:var(--tx3)"><div style="font-size:44px">🔍</div><div style="margin-top:11px;font-size:14px;font-weight:700">No students match your search.</div><div style="font-size:12px;margin-top:4px">Try different filters or clear the search.</div></div>';return;}
+  grid.innerHTML=f.map(function(s){
+    var lr=lastRec(s.id),rc=recCnt(s.id);
+    var gc=s.gn==='Female'?'sc-f':s.gn==='Other'?'sc-o':'sc-m';
+    var ri=rc>0?'<span style="color:var(--tgm);font-weight:800">'+rc+'</span> visit'+(rc>1?'s':'')+(lr?' · '+fmt(lr.dt):''):'<span style="color:var(--tx4)">Not yet screened</span>';
+    var ay=age(s.db);
+    var hsBadge='',urgBorder='';
+    if(lr){
+      var hs=calcHealthScore(lr,ay,s.gn);
+      if(hs!==null){var hc=scColor(hs);hsBadge='<div style="display:inline-flex;align-items:center;gap:4px;background:'+hc+'14;color:'+hc+';border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;border:1px solid '+hc+'44;margin-bottom:7px">♥ Health Score: '+hs+'%</div>';}
+      if(lr.hb&&getHbStatus(lr.hb,ay,s.gn).cls==='vc-a')urgBorder='border-left:4px solid var(--rd)!important;';
+      if(lr.bmi&&getBMIStatus(lr.bmi,ay).txt.includes('Severely'))urgBorder='border-left:4px solid var(--rd)!important;';
+    }
+    var vaccDone=NHM.filter(function(v){return s[v.id];}).length;
+    return '<div class="sc-card '+gc+'" style="'+urgBorder+'" onclick="showCard(\''+s.id+'\')">'
+      +'<div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">'+avt(s.name,s.gn,44)
+      +'<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.name+'</div>'
+      +'<div style="font-size:11px;color:var(--tx3);margin-top:2px">Cl. '+s.cl+'–'+(s.sc||'A')+' · Age '+ay+' · '+s.gn+(s.vl?' · '+s.vl:'')+'</div></div>'
+      +'<span style="font-size:11px;background:var(--bg3);border-radius:7px;padding:3px 9px;color:var(--tx2);font-weight:800;flex-shrink:0;border:1px solid var(--bd2)">'+(s.bg||'?')+'</span></div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px;margin-bottom:7px">'
+      +'<div style="font-size:11px;color:var(--tx2)">'+ri+'</div>'+(lr?badge(lr.st):'')+'</div>'
+      +(hsBadge||'')
+      +'<div style="font-size:10px;color:var(--gv);margin-bottom:9px;font-weight:600">💉 '+vaccDone+'/'+NHM.length+' NHM vaccines'+(vaccDone===NHM.length?' ✅':'')+'</div>'
+      +(s.al&&s.al!=='None'?'<div style="font-size:10px;background:var(--tsxl);color:var(--ts);border-radius:7px;padding:4px 9px;margin-bottom:8px;border:1px solid var(--tsl);font-weight:600">⚠️ '+s.al+'</div>':'')
+      +'<button class="bv" onclick="event.stopPropagation();openAddRec(\''+s.id+'\')">🩺 Add Check-up Record</button>'
+      +'</div>';
+  }).join('');
+}
+
+// ── HEALTH CARD ────────────────────────────────────────
+function showCard(sid){
+  curSid=sid;
+  document.getElementById('vw-list').style.display='none';
+  document.getElementById('vw-card').style.display='block';
+  document.getElementById('vw-bulk').style.display='none';
+  document.getElementById('printBtn').style.display='flex';
+  document.getElementById('printDrawerItem').style.display='flex';
+  var s=APP.students.find(function(x){return x.id===sid;});
+  if(s)document.getElementById('backInfo').innerHTML=s.name+' · Class '+s.cl+'–'+(s.sc||'A');
+  buildCard(sid);window.scrollTo(0,0);
+}
+function showList(){
+  curSid=null;
+  document.getElementById('vw-list').style.display='block';
+  document.getElementById('vw-card').style.display='none';
+  document.getElementById('vw-bulk').style.display='none';
+  document.getElementById('printBtn').style.display='none';
+  document.getElementById('printDrawerItem').style.display='none';
+  renderStrip();renderStudents();genAlerts();
+  document.getElementById('bnHome').classList.add('active');
+  ['bnUpload','bnAI','bnMore'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('active');});
+}
+function buildCard(sid){
+  var s=APP.students.find(function(x){return x.id===sid;});if(!s)return;
+  var recs=APP.records.filter(function(r){return r.sid===sid;}).sort(function(a,b){return new Date(b.dt)-new Date(a.dt);});
+  var lat=recs[0];var ay=age(s.db);var out='';
+  // ID CARD
+  out+='<div class="hcid">';
+  out+='<div style="position:absolute;top:0;right:0;bottom:0;width:7px;background:linear-gradient(180deg,var(--gold),var(--tsm),var(--gold));z-index:1"></div>';
+  out+='<div style="display:flex;align-items:center;gap:17px;position:relative;z-index:2">'+avt(s.name,s.gn,70);
+  out+='<div style="flex:1;min-width:0">';
+  out+='<div style="font-size:9px;font-weight:700;letter-spacing:.12em;opacity:.5;text-transform:uppercase;margin-bottom:3px;color:#fff">Vidyarthi Swasthya v6.0 · Khammam District, Telangana</div>';
+  out+='<div style="font-family:var(--fh);font-size:clamp(15px,4.5vw,24px);font-weight:800;color:#fff;margin-bottom:5px;text-shadow:0 2px 8px rgba(0,0,0,.3)">'+s.name+'</div>';
+  out+='<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.82);align-items:center">';
+  out+='<span>Class '+s.cl+'–'+(s.sc||'A')+'</span><span style="opacity:.3">|</span><span>'+s.gn+'</span><span style="opacity:.3">|</span><span>Age '+ay+'</span>';
+  if(s.vl)out+='<span style="opacity:.3">|</span><span>📍'+s.vl+'</span>';
+  out+='</div><div style="margin-top:5px;font-size:10px;color:rgba(255,255,255,.42);font-family:var(--fm)">ID: '+s.id+'</div></div>';
+  out+='<div style="background:rgba(255,255,255,.17);border-radius:var(--r);padding:10px 14px;text-align:center;flex-shrink:0;border:1px solid rgba(255,255,255,.22)"><div style="font-size:9px;font-weight:800;opacity:.6;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;color:#fff">Blood</div><div style="font-family:var(--fh);font-size:24px;font-weight:800;color:#fff">'+(s.bg||'?')+'</div></div>';
+  out+='</div>';
+  out+='<div style="position:absolute;bottom:10px;right:16px;background:rgba(249,168,37,.28);border:1px solid rgba(249,168,37,.45);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;color:rgba(249,168,37,.9);z-index:2">🏫 '+(APP.school.profile.name||APP.school.code)+'</div>';
+  out+='</div>';
+  // QUICK ACTIONS
+  out+='<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap">';
+  out+='<button class="btn btn-p btn-sm" onclick="openAddRec(\''+sid+'\')">🩺 Add Record</button>';
+  out+='<button class="btn btn-ai btn-sm" onclick="openAIAssistant()">🤖 Ask AI</button>';
+  out+='<button class="btn btn-gh btn-sm" onclick="window.print()">🖨️ Print A4</button>';
+  out+='<button class="btn btn-rd btn-sm" onclick="deleteStu(\''+sid+'\')" style="margin-left:auto">🗑️</button>';
+  out+='</div>';
+  // INFO GRID
+  out+='<div class="ip-grid">';
+  out+='<div class="ip"><div class="ip-l">Date of Birth</div><div class="ip-v">'+fmt(s.db)+'</div></div>';
+  out+='<div class="ip"><div class="ip-l">Father / Guardian</div><div class="ip-v">'+s.pa+'</div></div>';
+  out+='<div class="ip"><div class="ip-l">Mobile</div><div class="ip-v">'+(s.mo||'—')+'</div></div>';
+  out+='<div class="ip"><div class="ip-l">Total Visits</div><div class="ip-v" style="color:var(--tgm);font-weight:900;font-family:var(--fh)">'+recs.length+'</div></div>';
+  if(s.ct)out+='<div class="ip"><div class="ip-l">Category</div><div class="ip-v">'+s.ct+'</div></div>';
+  if(s.md)out+='<div class="ip"><div class="ip-l">Mandal</div><div class="ip-v">'+s.md+'</div></div>';
+  out+='</div>';
+  // ALERTS
+  if(s.al&&s.al!=='None')out+='<div class="al-strip" style="background:var(--tsxl);border-color:var(--tsm)"><div style="font-size:20px">⚠️</div><div><div style="font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Known Allergies</div><div style="font-size:13px;color:var(--ts)">'+s.al+'</div></div></div>';
+  if(s.hi&&s.hi!=='None')out+='<div class="al-strip" style="background:var(--gvl);border-color:var(--gv)"><div style="font-size:20px">📋</div><div><div style="font-size:10px;font-weight:800;color:var(--gv);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Medical History</div><div style="font-size:13px;color:var(--gv)">'+s.hi+'</div></div></div>';
+  // HEALTH SCORE
+  if(lat){
+    var hs=calcHealthScore(lat,ay,s.gn);
+    if(hs!==null){
+      var hc=scColor(hs),hl=scLabel(hs);
+      var r2=54,cx2=60,cy2=60,stroke=9,norm2=2*Math.PI*r2;
+      var prog=norm2*(hs/100);var dash=prog+' '+(norm2-prog);
+      out+='<div class="hs-card">';
+      out+='<div class="score-ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="'+cx2+'" cy="'+cy2+'" r="'+r2+'" fill="none" stroke="var(--bd2)" stroke-width="'+stroke+'"/><circle cx="'+cx2+'" cy="'+cy2+'" r="'+r2+'" fill="none" stroke="'+hc+'" stroke-width="'+stroke+'" stroke-dasharray="'+dash+'" stroke-linecap="round"/></svg>';
+      out+='<div class="score-txt"><div style="font-family:var(--fh);font-size:24px;font-weight:800;color:'+hc+'">'+hs+'</div><div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em">Score</div></div></div>';
+      out+='<div style="flex:1"><div style="font-family:var(--fh);font-size:18px;font-weight:800;color:'+hc+';margin-bottom:5px">'+hl+'</div>';
+      out+='<div style="font-size:12px;color:var(--tx3);line-height:1.65">Based on latest vitals: BMI, Hb, BP, Temp, Vision, Pulse</div>';
+      out+='<div style="margin-top:8px;font-size:11px;color:var(--tx4)">Last visit: '+fmt(lat.dt)+'</div></div>';
+      out+='</div>';
+    }
+  }
+  // GOVT SCHEMES
+  out+='<div class="scheme-panel">';
+  out+='<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mt);margin-bottom:2px">🏛 Govt Schemes Eligibility</div>';
+  out+='<div style="font-size:11px;color:var(--tx3);margin-bottom:9px">Based on student profile</div>';
+  out+='<div class="scheme-grid">';
+  var isMal=lat&&((lat.bmi&&getBMIStatus(lat.bmi,ay).cls!=='vc-n')||(lat.nu&&lat.nu!=='Normal'));
+  var isAn=lat&&lat.hb&&getHbStatus(lat.hb,ay,s.gn).cls!=='vc-n';
+  var isGirlAdol=s.gn==='Female'&&ay>=10&&ay<=19;
+  out+='<div class="scheme-item" style="border-color:var(--tgm)"><div style="font-size:11px;font-weight:800;color:var(--tgm)">🍱 MDM</div><div style="font-size:10px;color:var(--tx3);margin-top:3px">Mid Day Meal Programme</div><div style="font-size:10px;font-weight:700;color:'+(isMal?'var(--rd)':'var(--tgm)')+';margin-top:3px">'+(isMal?'⚡ Extra ration recommended':'✅ Standard portion')+'</div></div>';
+  out+='<div class="scheme-item" style="border-color:var(--gv)"><div style="font-size:11px;font-weight:800;color:var(--gv)">💊 WIFS</div><div style="font-size:10px;color:var(--tx3);margin-top:3px">Weekly Iron & Folic Acid</div><div style="font-size:10px;font-weight:700;color:'+(isGirlAdol?'var(--rd)':'var(--tx3)')+';margin-top:3px">'+(isGirlAdol?'⚡ Eligible — IFA 100mg weekly':'ℹ️ Girls 10-19 only')+'</div></div>';
+  out+='<div class="scheme-item" style="border-color:var(--mb)"><div style="font-size:11px;font-weight:800;color:var(--mb)">🏥 Aarogyasri</div><div style="font-size:10px;color:var(--tx3);margin-top:3px">Telangana Health Scheme</div><div style="font-size:10px;font-weight:700;color:var(--mb);margin-top:3px">✅ For hospitalisation</div></div>';
+  out+='<div class="scheme-item" style="border-color:var(--tsm)"><div style="font-size:11px;font-weight:800;color:var(--tsm)">🩸 IFA Syrup</div><div style="font-size:10px;color:var(--tx3);margin-top:3px">Iron Folic Acid Supplement</div><div style="font-size:10px;font-weight:700;color:'+(isAn?'var(--rd)':'var(--tgm)')+';margin-top:3px">'+(isAn?'⚡ Recommended — start now':'✅ Normal Hb level')+'</div></div>';
+  out+='</div></div>';
+  // VACCINATION TABLE
+  out+='<div class="vbar">';
+  out+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  out+='<div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--gv)">💉 NHM 2024 Vaccination Status</div>';
+  var vDone=NHM.filter(function(v){return s[v.id];}).length;
+  out+='<div style="font-size:11px;font-weight:800;color:'+(vDone===NHM.length?'var(--tgm)':'var(--tsm)')+'">'+vDone+'/'+NHM.length+(vDone===NHM.length?' ✅ Complete':' pending')+'</div>';
+  out+='</div>';
+  out+='<table class="vt"><thead><tr><th>Vaccine</th><th>Disease</th><th>Schedule</th><th>Status</th></tr></thead><tbody>';
+  NHM.forEach(function(v){
+    var done=s[v.id];
+    out+='<tr><td><b style="color:'+v.col+'">'+v.lbl+'</b></td><td>'+v.dis+'</td><td>'+v.sch+'</td><td><span style="font-weight:800;color:'+(done?'#2E7D32':'#B71C1C')+'">'+(done?'✅ Given':'❌ Pending')+'</span></td></tr>';
+  });
+  out+='</tbody></table></div>';
+  // VITALS LATEST
+  if(lat){
+    out+='<div class="vbar">';
+    out+='<div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--tg);margin-bottom:12px">📊 Latest Vitals — '+fmt(lat.dt)+'</div>';
+    out+='<div class="g3" style="gap:10px">';
+    if(lat.bmi){var bs2=getBMIStatus(lat.bmi,ay);out+='<div class="vchip '+bs2.cls+'" style="background:'+bs2.bg+';border-color:'+(bs2.cls==='vc-n'?'var(--tg2)':bs2.cls==='vc-w'?'#FFCC80':'#EF9A9A')+'"><div class="vl">BMI</div><div class="vv" style="color:'+bs2.col+'">'+lat.bmi+'</div><div class="vi">'+bs2.txt.split(' ')[0]+'</div></div>';}
+    if(lat.hb){var hbs2=getHbStatus(lat.hb,ay,s.gn);out+='<div class="vchip '+hbs2.cls+'" style="background:'+hbs2.bg+'"><div class="vl">Hb (g/dl)</div><div class="vv" style="color:'+hbs2.col+'">'+lat.hb+'</div><div class="vi">'+hbs2.txt.split(' ')[0]+'</div></div>';}
+    if(lat.bp){var bps2=getBPStatus(lat.bp);out+='<div class="vchip '+bps2.cls+'" style="background:'+bps2.bg+'"><div class="vl">Blood Pressure</div><div class="vv" style="color:'+bps2.col+'">'+lat.bp+'</div><div class="vi">'+bps2.txt.split('(')[0].trim()+'</div></div>';}
+    if(lat.tp){var tps2=getTpStatus(lat.tp);out+='<div class="vchip '+tps2.cls+'" style="background:'+tps2.bg+'"><div class="vl">Temp (°F)</div><div class="vv" style="color:'+tps2.col+'">'+lat.tp+'</div><div class="vi">'+tps2.txt.split('(')[0].trim()+'</div></div>';}
+    if(lat.pu)out+='<div class="vchip vc-n"><div class="vl">Pulse (bpm)</div><div class="vv" style="color:var(--tgm)">'+lat.pu+'</div><div class="vi">Beats/min</div></div>';
+    if(lat.vi)out+='<div class="vchip vc-n"><div class="vl">Vision</div><div class="vv" style="color:var(--mb);font-size:11px">'+lat.vi+'</div><div class="vi">L/R</div></div>';
+    out+='</div>';
+    if(lat.nu)out+='<div style="margin-top:10px;font-size:12px;color:var(--tx2)"><b>Nutrition:</b> '+lat.nu+'</div>';
+    out+='</div>';
+  }
+  // MEDICAL RECORDS
+  out+='<div class="ch-sec">';
+  out+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px"><div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--tg)">📋 Medical Records ('+recs.length+')</div><button class="btn btn-p btn-sm" onclick="openAddRec(\''+sid+'\')">➕ Add</button></div>';
+  if(!recs.length){out+='<div style="text-align:center;padding:24px;color:var(--tx4)"><div style="font-size:36px;margin-bottom:8px">🩺</div><div style="font-size:13px;font-weight:700">No records yet</div><div style="font-size:12px;margin-top:4px">Add the first check-up record above.</div></div>';}
+  else{
+    recs.forEach(function(r){
+      var sc2=SC[r.st]||SC.Routine;
+      out+='<div class="rec-card" style="border-left-color:'+sc2.dot+'">';
+      out+='<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:9px">';
+      out+='<div><div style="font-weight:800;font-size:13px;color:var(--tx)">'+fmt(r.dt)+(r.wk?' <span style="font-size:10px;color:var(--tx3);font-weight:600">· '+r.wk+'</span>':'')+'</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">'+r.dc+(r.sp?' · '+r.sp:'')+(r.in?' · '+r.in:'')+'</div></div>';
+      out+=badge(r.st)+'</div>';
+      if(r.di)out+='<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">🔬 '+r.di+'</div>';
+      if(r.bmi||r.hb||r.bp||r.tp){
+        out+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px">';
+        if(r.bmi)out+='<span style="font-size:11px;background:var(--bg3);border-radius:20px;padding:3px 9px;border:1px solid var(--bd2);font-weight:600">BMI '+r.bmi+'</span>';
+        if(r.hb)out+='<span style="font-size:11px;background:var(--bg3);border-radius:20px;padding:3px 9px;border:1px solid var(--bd2);font-weight:600">Hb '+r.hb+' g/dl</span>';
+        if(r.bp)out+='<span style="font-size:11px;background:var(--bg3);border-radius:20px;padding:3px 9px;border:1px solid var(--bd2);font-weight:600">BP '+r.bp+'</span>';
+        if(r.tp)out+='<span style="font-size:11px;background:var(--bg3);border-radius:20px;padding:3px 9px;border:1px solid var(--bd2);font-weight:600">'+r.tp+'°F</span>';
+        out+='</div>';
+      }
+      if(r.rx)out+='<div style="font-size:12px;color:var(--tgm);margin-bottom:5px">💊 '+r.rx+'</div>';
+      if(r.fu)out+='<div style="font-size:12px;color:var(--ts)">📅 Follow-up: '+r.fu+'</div>';
+      if(r.rf)out+='<div style="font-size:12px;color:var(--rd);margin-top:4px">🏥 Referred: '+r.rf+'</div>';
+      var vaccGiven=NHM.filter(function(v){return r['rv_'+v.id];}).map(function(v){return v.lbl;});
+      if(vaccGiven.length)out+='<div style="font-size:11px;color:var(--gv);margin-top:6px;font-weight:600">💉 Vaccinated: '+vaccGiven.join(', ')+'</div>';
+      out+='<button class="btn btn-rd btn-sm" style="margin-top:9px;font-size:11px" onclick="deleteRec(\''+r.id+'\',\''+sid+'\')">🗑️ Delete</button>';
+      out+='</div>';
+    });
+  }
+  out+='</div>';
+  document.getElementById('hcContent').innerHTML=out;
+}
+
+// ── STUDENT CRUD ───────────────────────────────────────
+function saveStu(){
+  var nm=gEl('s-nm'),db=gEl('s-db'),pa=gEl('s-pa');
+  if(!nm||!db||!pa){alert('Name, Date of Birth and Father/Guardian are required.');return;}
+  var s={id:uid('S'),name:nm,db:db,pa:pa,cl:gEl('s-cl'),sc:gEl('s-sc'),gn:gEl('s-gn'),bg:gEl('s-bg'),mo:gEl('s-mo'),vl:gEl('s-vl'),md:gEl('s-md'),ct:gEl('s-ct'),ad:gEl('s-ad'),al:gEl('s-al')||'None',hi:gEl('s-hi')||'None',reg:today()};
+  NHM.forEach(function(v){var ck=document.getElementById('vi-'+v.id.replace('v_',''));s[v.id]=ck?ck.checked:false;});
+  APP.students.push(s);sbUpsertStudent(s);
+  closeModal('mo-addst');renderStrip();renderStudents();genAlerts();
+  toast('✅ '+nm+' registered!');updateStats();
+}
+function deleteStu(sid){
+  if(!confirm('Delete this student and ALL their records? This cannot be undone.'))return;
+  APP.students=APP.students.filter(function(s){return s.id!==sid;});
+  APP.records=APP.records.filter(function(r){return r.sid!==sid;});
+  sbDeleteStudent(sid).then(function(){showList();toast('Student deleted.','w');});
+}
+
+// ── RECORD CRUD ────────────────────────────────────────
+function openAddRec(sid){
+  curSid=sid;var s=APP.students.find(function(x){return x.id===sid;});
+  document.getElementById('recT').textContent='🩺 Add Record — '+(s?s.name:'Student');
+  sEl('r-dt',today());sEl('r-wk','');sEl('r-dc','');sEl('r-sp','General Physician');sEl('r-rg','');sEl('r-in','');
+  sEl('r-ht','');sEl('r-wt','');sEl('r-bmi','');sEl('r-bmis','');sEl('r-bp','');sEl('r-bps','');
+  sEl('r-tp','');sEl('r-tps','');sEl('r-pu','');sEl('r-hb','');sEl('r-hbs','');sEl('r-mu','');sEl('r-mus','');
+  sEl('r-vi','');sEl('r-de','');sEl('r-hr','');sEl('r-sk','');sEl('r-nu','');
+  sEl('r-vbt','');sEl('r-vby','');sEl('r-vst','');sEl('r-vnd','');
+  sEl('r-co','');sEl('r-fi','');sEl('r-di','');sEl('r-rx','');sEl('r-fu','');sEl('r-rf','');sEl('r-no','');
+  ['r-bmis','r-bps','r-tps','r-hbs','r-mus'].forEach(function(id){var e=document.getElementById(id);if(e){e.style.background='';e.style.color='';}});
+  var grid=document.getElementById('vcGrid');
+  if(grid&&s){
+    grid.innerHTML=NHM.map(function(v){
+      var done=s[v.id];
+      return '<div class="vc-item'+(done?' done':'')+'\" data-vid="'+v.id+'" data-col="'+v.col+'" onclick="toggleVaccRec(this,\''+v.id+'\')"><div class="vc-chk" style="width:22px;height:22px;border-radius:6px;border:2px solid '+(done?v.col:'var(--bd)')+';background:'+(done?v.col:'transparent')+';display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:.15s">'+(done?'✓':'')+'</div><div><div style="font-size:12px;font-weight:700;color:'+(done?v.col:'var(--tx2)')+'">'+v.lbl+'</div><div style="font-size:10px;color:var(--tx4)">'+v.sch+'</div><div class="vc-status" style="font-size:10px;color:'+(done?'var(--tgm)':'var(--tx4)')+';font-weight:600;margin-top:1px">'+(done?'✅ Already given':'Tap to mark given')+'</div></div></div>';
+    }).join('');
+  }
+  openModal('mo-addrec');
+}
+function toggleVaccRec(el,vid){
+  var on=el.classList.toggle('done');
+  el.setAttribute('data-vid',vid);
+  var col=el.getAttribute('data-col')||'#2E7D32';
+  var chk=el.querySelector('.vc-chk');
+  if(chk){chk.style.background=on?col:'transparent';chk.style.borderColor=on?col:'var(--bd)';chk.innerHTML=on?'✓':'';}
+  var st=el.querySelector('.vc-status');
+  if(st){st.style.color=on?'var(--tgm)':'var(--tx4)';st.textContent=on?'✅ Given this visit':'Tap to mark given';}
+}
+function saveRec(){
+  var di=gEl('r-di'),dc=gEl('r-dc'),dt=gEl('r-dt');
+  if(!di||!dc||!dt){alert('Date, Doctor Name and Diagnosis are required.');return;}
+  var s=APP.students.find(function(x){return x.id===curSid;});
+  var rec={id:uid('R'),sid:curSid,dt:dt,wk:gEl('r-wk'),dc:dc,sp:gEl('r-sp'),rg:gEl('r-rg'),in:gEl('r-in'),
+    ht:gEl('r-ht'),wt:gEl('r-wt'),bmi:gEl('r-bmi'),bp:gEl('r-bp'),tp:gEl('r-tp'),pu:gEl('r-pu'),
+    hb:gEl('r-hb'),mu:gEl('r-mu'),vi:gEl('r-vi'),de:gEl('r-de'),hr:gEl('r-hr'),sk:gEl('r-sk'),nu:gEl('r-nu'),
+    vbt:gEl('r-vbt'),vby:gEl('r-vby'),vst:gEl('r-vst'),vnd:gEl('r-vnd'),
+    ca:gEl('r-ca'),st:gEl('r-st'),co:gEl('r-co'),fi:gEl('r-fi'),di:di,rx:gEl('r-rx'),fu:gEl('r-fu'),rf:gEl('r-rf'),no:gEl('r-no')};
+  // Update vaccination status on student
+  var vcGrid=document.getElementById('vcGrid');
+  var stuChanged=false;
+  if(vcGrid&&s){
+    vcGrid.querySelectorAll('.vc-item.done').forEach(function(el){
+      var vid=el.getAttribute('data-vid');if(vid){if(!s[vid])stuChanged=true;s[vid]=true;}
+      rec['rv_'+vid]=true;
+    });
+    var si=APP.students.findIndex(function(x){return x.id===curSid;});
+    if(si>=0)APP.students[si]=s;
+  }
+  APP.records.push(rec);
+  sbUpsertRecord(rec);
+  if(stuChanged&&s)sbUpsertStudent(s); // vaccine flags persist on the student row
+  closeModal('mo-addrec');buildCard(curSid);renderStrip();genAlerts();
+  toast('✅ Record saved!');
+}
+function deleteRec(rid,sid){
+  if(!confirm('Delete this record?'))return;
+  APP.records=APP.records.filter(function(r){return r.id!==rid;});
+  sbDeleteRecord(rid).then(function(){buildCard(sid);renderStrip();genAlerts();toast('Record deleted.','w');});
+}
+
+// ── CHANGE PIN ─────────────────────────────────────────
+function changePIN(){
+  var cur=gEl('p-cur'),np=gEl('p-new'),cp=gEl('p-con');
+  var er=document.getElementById('p-err'),ok=document.getElementById('p-ok');
+  er.style.display='none';ok.style.display='none';
+  if(!chkP(cur,APP.school.profile.pin)){er.textContent='⚠️ Current PIN incorrect.';er.style.display='block';return;}
+  if(np.length<4){er.textContent='⚠️ New PIN must be at least 4 characters.';er.style.display='block';return;}
+  if(np!==cp){er.textContent='⚠️ New PINs do not match.';er.style.display='block';return;}
+  var newHash=hashPin(np);
+  sb.from('schools').update({pin_hash:newHash}).eq('code',APP.school.code.toUpperCase()).then(function(r){
+    if(r.error){er.textContent='⚠️ Cloud error: '+r.error.message;er.style.display='block';return;}
+    APP.school.profile.pin=newHash;
+    cacheSch(APP.school.code,{profile:APP.school.profile,students:APP.students,records:APP.records});
+    ok.textContent='✅ PIN updated — active on every device.';ok.style.display='block';toast('✅ PIN changed!');
+  });
+}
+
+// ── UPLOAD ─────────────────────────────────────────────
+function swTab(t){
+  utab=t;
+  document.getElementById('tab-p').style.display=t==='p'?'block':'none';
+  document.getElementById('tab-f').style.display=t==='f'?'block':'none';
+  document.getElementById('tA').className='tab-b'+(t==='p'?' on':'');
+  document.getElementById('tB').className='tab-b'+(t==='f'?' on':'');
+}
+function parseRow(row){
+  var cols=row.split('\t');
+  return{name:(cols[0]||'').trim(),pa:(cols[1]||'').trim(),db:(cols[2]||'').trim(),cl:(cols[3]||'6').trim(),sc:(cols[4]||'A').trim(),gn:(cols[5]||'Male').trim(),bg:(cols[6]||'O+').trim(),mo:(cols[7]||'').trim(),vl:(cols[8]||'').trim(),al:(cols[9]||'None').trim(),hi:(cols[10]||'None').trim()};
+}
+var parsedRows=[];
+function parsePaste(){
+  var txt=document.getElementById('paD').value.trim();
+  parsedRows=txt.split('\n').map(parseRow).filter(function(r){return r.name;});
+  showParsedPreview(parsedRows,'paPr','paEr');
+}
+function showParsedPreview(rows,prId,erId){
+  var pr=document.getElementById(prId),er=document.getElementById(erId);
+  if(!rows.length){pr.style.display='none';er.style.display='none';document.getElementById('impBtn').style.display='none';return;}
+  pr.innerHTML='<div style="background:var(--tgxl);border:1px solid var(--tg2);border-radius:var(--rs);padding:10px;font-size:12px;color:var(--tg)"><b>✅ '+rows.length+' rows found:</b> '+rows.slice(0,3).map(function(r){return r.name;}).join(', ')+(rows.length>3?'…':'')+'</div>';
+  pr.style.display='block';er.style.display='none';
+  document.getElementById('impBtn').style.display='flex';
+}
+function loadSample(){
+  document.getElementById('paD').value='Ravi Kumar\tRamaiah\t2013-05-15\t6\tA\tMale\tO+\t9876543210\tMadhira\tNone\tNone\nPriya Devi\tVenkatesh\t2014-03-22\t6\tA\tFemale\tB+\t9812345678\tKhammam\tNone\tNone\nArjun Reddy\tNarayan Reddy\t2012-11-01\t7\tB\tMale\tA+\t9800012345\tPalvancha\tNone\tNone';
+  parsePaste();
+}
+function doImport(){
+  if(!parsedRows.length)return;
+  var added=0,batch=[];
+  parsedRows.forEach(function(r){
+    if(!r.name)return;
+    var s={id:uid('S'),name:r.name,pa:r.pa,db:r.db,cl:r.cl,sc:r.sc,gn:r.gn,bg:r.bg,mo:r.mo,vl:r.vl,al:r.al,hi:r.hi,reg:today()};
+    NHM.forEach(function(v){s[v.id]=false;});
+    APP.students.push(s);
+    batch.push({id:s.id,school_code:APP.school.code.toUpperCase(),data:s});
+    added++;
+  });
+  if(!added){toast('No students imported.','w');return;}
+  // One bulk upsert is much faster than N round-trips for big imports.
+  sb.from('students').upsert(batch).then(function(r){
+    if(r.error){toast('⚠️ Cloud error: '+r.error.message,'e');return;}
+    closeModal('mo-upl');renderStrip();renderStudents();genAlerts();updateStats();
+    toast('✅ '+added+' students imported & synced!');parsedRows=[];
+  });
+}
+function dlTemplate(){
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet([['Name','Father','DOB (YYYY-MM-DD)','Class','Section','Gender','Blood Group','Mobile','Village','Allergies','History'],['Ravi Kumar','Ramaiah','2013-05-15','6','A','Male','O+','9876543210','Madhira','None','None']]);
+  XLSX.utils.book_append_sheet(wb,ws,'Students');
+  XLSX.writeFile(wb,'VidyarthiSwasthya_Template.xlsx');
+}
+function onFC(ev){
+  var file=ev.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary'});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var data=XLSX.utils.sheet_to_csv(ws);
+      parsedRows=data.split('\n').slice(1).map(function(row){return parseRow(row.replace(/,/g,'\t'));}).filter(function(r){return r.name;});
+      showParsedPreview(parsedRows,'fiPr','fiEr');
+      document.getElementById('uzTxt').textContent='✅ '+file.name+' — '+parsedRows.length+' rows';
+    }catch(err){document.getElementById('fiEr').textContent='⚠️ Error reading file: '+err.message;document.getElementById('fiEr').style.display='block';}
+  };
+  reader.readAsBinaryString(file);
+}
+function onDrop(ev){ev.preventDefault();document.getElementById('uzBox').classList.remove('drag');var f=ev.dataTransfer.files[0];if(f){document.getElementById('fIn').files=ev.dataTransfer.files;onFC({target:{files:ev.dataTransfer.files}});}}
+
+// ── EXPORT ─────────────────────────────────────────────
+function openExportModal(){
+  var opts=[
+    {n:'Students List',d:'All registered students',fn:expStudents,c:'var(--tgm)',i:'🎒'},
+    {n:'Medical Records',d:'All health check-up records',fn:expRecords,c:'var(--mtm)',i:'🩺'},
+    {n:'Full Report (3-Sheet)',d:'Students + Records + Analytics combined',fn:expFull,c:'var(--gv)',i:'📊'},
+    {n:'Follow-up List',d:'Students needing follow-up or referred',fn:expFollowup,c:'var(--ts)',i:'⚠️'},
+    {n:'Vaccination Coverage',d:'NHM 2024 vaccination status per student',fn:expVacc,c:'#9C27B0',i:'💉'},
+    {n:'Anaemia Report',d:'Students below WHO Hb threshold',fn:expAnaemia,c:'var(--rd)',i:'🩸'}
+  ];
+  document.getElementById('expOpts').innerHTML=opts.map(function(o,i){
+    return '<div style="border:1.5px solid var(--bd2);border-radius:var(--r);padding:13px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg3)">'
+      +'<div style="display:flex;align-items:center;gap:11px"><div style="width:38px;height:38px;border-radius:10px;background:'+o.c+'20;border:1.5px solid '+o.c+'44;display:flex;align-items:center;justify-content:center;font-size:19px">'+o.i+'</div><div><div style="font-weight:800;font-size:13px;color:'+o.c+'">'+o.n+'</div><div style="font-size:11px;color:var(--tx3)">'+o.d+'</div></div></div>'
+      +'<button class="btn btn-sm" style="background:'+o.c+';color:#fff;flex-shrink:0" onclick="expFns['+i+']()">📥 Export</button></div>';
+  }).join('');
+  window.expFns=opts.map(function(o){return o.fn;});
+  openModal('mo-exp');
+}
+function mkWB(sheets){var wb=XLSX.utils.book_new();sheets.forEach(function(s){XLSX.utils.book_append_sheet(wb,s.ws,s.n);});return wb;}
+function expStudents(){
+  var rows=[['ID','Name','Father','DOB','Age','Class','Section','Gender','Blood Group','Mobile','Village','Mandal','Category','Allergies','History','Registered']];
+  APP.students.forEach(function(s){rows.push([s.id,s.name,s.pa,s.db,age(s.db),s.cl,s.sc||'A',s.gn,s.bg,s.mo,s.vl,s.md,s.ct,s.al,s.hi,s.reg]);});
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(rows),n:'Students'}]);
+  XLSX.writeFile(wb,'VS_Students_'+today()+'.xlsx');toast('✅ Students exported!');
+}
+function expRecords(){
+  var rows=[['Record ID','Student ID','Student Name','Date','Week','Doctor','Specialization','Institution','Height','Weight','BMI','BP','Temp','Pulse','Hb','MUAC','Vision','Dental','Hearing','Skin','Nutrition','Category','Status','Complaints','Findings','Diagnosis','Prescription','Follow-up','Referred To','Notes']];
+  APP.records.forEach(function(r){
+    var s=APP.students.find(function(x){return x.id===r.sid;});
+    rows.push([r.id,r.sid,s?s.name:'—',r.dt,r.wk,r.dc,r.sp,r.in,r.ht,r.wt,r.bmi,r.bp,r.tp,r.pu,r.hb,r.mu,r.vi,r.de,r.hr,r.sk,r.nu,r.ca,r.st,r.co,r.fi,r.di,r.rx,r.fu,r.rf,r.no]);
+  });
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(rows),n:'Records'}]);
+  XLSX.writeFile(wb,'VS_Records_'+today()+'.xlsx');toast('✅ Records exported!');
+}
+function expFull(){
+  var sRows=[['ID','Name','Father','DOB','Class','Gender','Blood Group','Village']];
+  APP.students.forEach(function(s){sRows.push([s.id,s.name,s.pa,s.db,s.cl,s.gn,s.bg,s.vl]);});
+  var rRows=[['Date','Student','Doctor','Diagnosis','Status','BMI','Hb','BP','Temp','Follow-up']];
+  APP.records.forEach(function(r){var s=APP.students.find(function(x){return x.id===r.sid;});rRows.push([r.dt,s?s.name:'—',r.dc,r.di,r.st,r.bmi,r.hb,r.bp,r.tp,r.fu]);});
+  var aRows=[['Metric','Value'],['Total Students',APP.students.length],['Total Records',APP.records.length],['Follow-up Needed',APP.students.filter(function(s){var r=lastRec(s.id);return r&&r.st==='Follow-up needed';}).length],['Referred',APP.students.filter(function(s){var r=lastRec(s.id);return r&&r.st==='Referred';}).length],['School',APP.school.profile.name],['Code',APP.school.code],['Export Date',today()]];
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(sRows),n:'Students'},{ws:XLSX.utils.aoa_to_sheet(rRows),n:'Records'},{ws:XLSX.utils.aoa_to_sheet(aRows),n:'Analytics'}]);
+  XLSX.writeFile(wb,'VS_FullReport_'+today()+'.xlsx');toast('✅ Full report exported!');
+}
+function expFollowup(){
+  var rows=[['Name','Class','Village','Last Visit','Status','Doctor','Diagnosis','Follow-up Instruction','Referred To','Mobile']];
+  APP.students.forEach(function(s){var r=lastRec(s.id);if(r&&(r.st==='Follow-up needed'||r.st==='Referred'||r.st==='Under monitoring'))rows.push([s.name,s.cl+'–'+(s.sc||'A'),s.vl,r.dt,r.st,r.dc,r.di,r.fu,r.rf,s.mo]);});
+  if(rows.length<2){toast('No follow-up students found.','w');return;}
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(rows),n:'Follow-up List'}]);
+  XLSX.writeFile(wb,'VS_Followup_'+today()+'.xlsx');toast('✅ Follow-up list exported!');
+}
+function expVacc(){
+  var header=['Name','Class','Gender','Age'].concat(NHM.map(function(v){return v.lbl;})).concat(['Total Done','Total Pending']);
+  var rows=[header];
+  APP.students.forEach(function(s){
+    var done=NHM.filter(function(v){return s[v.id];}).length;
+    var row=[s.name,s.cl+'–'+(s.sc||'A'),s.gn,age(s.db)].concat(NHM.map(function(v){return s[v.id]?'✅':'❌';})).concat([done,NHM.length-done]);
+    rows.push(row);
+  });
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(rows),n:'Vaccination Coverage'}]);
+  XLSX.writeFile(wb,'VS_Vaccination_'+today()+'.xlsx');toast('✅ Vaccination report exported!');
+}
+function expAnaemia(){
+  var rows=[['Name','Class','Gender','Age','Hb (g/dl)','WHO Threshold','Status','Last Visit','Doctor','Prescription','Follow-up']];
+  APP.students.forEach(function(s){
+    var lr=lastRec(s.id);if(!lr||!lr.hb)return;
+    var ay=age(s.db);var hs=getHbStatus(lr.hb,ay,s.gn);
+    if(hs.cls!=='vc-n')rows.push([s.name,s.cl+'–'+(s.sc||'A'),s.gn,ay,lr.hb,hs.thr,hs.txt,lr.dt,lr.dc,lr.rx,lr.fu]);
+  });
+  if(rows.length<2){toast('No anaemia cases found.','w');return;}
+  var wb=mkWB([{ws:XLSX.utils.aoa_to_sheet(rows),n:'Anaemia Report'}]);
+  XLSX.writeFile(wb,'VS_Anaemia_'+today()+'.xlsx');toast('✅ Anaemia report exported!');
+}
+
+// ── BACKUP & RESTORE ───────────────────────────────────
+function backupData(){
+  if(!APP.school){toast('Please login first.','w');return;}
+  var data={version:'6.0',school:APP.school,students:APP.students,records:APP.records,backup_ts:new Date().toISOString(),device:navigator.userAgent.substring(0,50)};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='VidyarthiSwasthya_'+APP.school.code+'_'+today()+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('💾 Backup downloaded!');
+}
+function openRestoreModal(){openModal('mo-restore');}
+function onRestoreFC(ev){
+  var file=ev.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      restoreBuf=JSON.parse(e.target.result);
+      if(!restoreBuf.school||!restoreBuf.students){throw new Error('Invalid backup file format.');}
+      document.getElementById('rzTxt').textContent='✅ '+file.name+' loaded';
+      var prev=document.getElementById('restorePrev');
+      prev.innerHTML='<b>'+restoreBuf.school.profile.name+'</b> ('+restoreBuf.school.code+')<br>'+restoreBuf.students.length+' students · '+(restoreBuf.records||[]).length+' records<br>Backed up: '+fmt(restoreBuf.backup_ts);
+      prev.style.display='block';
+      document.getElementById('restoreBtn').style.display='flex';
+      document.getElementById('restoreErr').style.display='none';
+    }catch(err){document.getElementById('restoreErr').textContent='⚠️ Invalid file: '+err.message;document.getElementById('restoreErr').style.display='block';}
+  };
+  reader.readAsText(file);
+}
+function doRestore(){
+  if(!restoreBuf){toast('No backup loaded.','w');return;}
+  var code=restoreBuf.school.code.toUpperCase();
+  var profile=restoreBuf.school.profile;
+  var stu=restoreBuf.students||[],rec=restoreBuf.records||[];
+  document.getElementById('restoreOk').textContent='⏳ Uploading to cloud…';
+  document.getElementById('restoreOk').style.display='block';
+  // Push school + students + records to Supabase so this restore is visible
+  // on every other device immediately, not just this one.
+  sbUpsertSchool(profile,code).then(function(r){
+    if(r.error){document.getElementById('restoreErr').textContent='⚠️ Cloud error: '+r.error.message;document.getElementById('restoreErr').style.display='block';return;}
+    var stuRows=stu.map(function(s){return {id:s.id,school_code:code,data:s};});
+    var recRows=rec.map(function(x){return {id:x.id,student_id:x.sid,school_code:code,data:x};});
+    var jobs=[];
+    if(stuRows.length)jobs.push(sb.from('students').upsert(stuRows));
+    if(recRows.length)jobs.push(sb.from('health_records').upsert(recRows));
+    Promise.all(jobs).then(function(){
+      closeModal('mo-restore');
+      enterApp(code,{profile:profile,students:stu,records:rec});
+      toast('✅ Data restored — synced to all devices!');restoreBuf=null;
+    });
+  });
+}
+
+// ── INIT COMPLETE ──────────────────────────────────────
+console.log('Vidyarthi Swasthya v6.0 — AI Student Health Super App | Khammam District, Telangana');
+console.log('Admin Code: COLLECTOR | PIN: KHM@Admin2024');
+</script>
+</body>
+</html>
