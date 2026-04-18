@@ -2,7 +2,7 @@
 // Caches the app shell for instant loading and offline use.
 // Data (students, records) always comes from Supabase when online.
 
-var CACHE = 'vs-shell-v1';
+var CACHE = 'vs-shell-v7';
 var SHELL = [
   '/',
   '/index.html',
